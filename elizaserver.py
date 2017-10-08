@@ -1,14 +1,5 @@
-# import mysql.connector
 import socket
 import threading
-
-
-connection_config = {
-    'user': 'root',
-    'password': 'oprisa',
-    'host': '127.0.0.1',
-    'database': 'eliza',
-}
 
 
 class ClientHandler(threading.Thread):
@@ -55,15 +46,6 @@ class Server(threading.Thread):
 
 
 if __name__ == '__main__':
-    # connection = mysql.connector.connect(**connection_config)
-    # print 'Connection to database established successfully'
-
-    #server = SocketServer.TCPServer((host, port), serverhandler.RequestHandler)
-    #server.serve_forever()
-
     server = Server('192.168.0.113', 9999)
     server.start()
     server.join()
-
-
-    # connection.close()

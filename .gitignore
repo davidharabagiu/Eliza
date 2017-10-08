@@ -50,3 +50,4 @@ fabric.properties
 *.xml___jb_tmp___
 .idea/inspectionProfiles/Project_Default.xml
 .idea/inspectionProfiles/profiles_settings.xml
+*.pyc
