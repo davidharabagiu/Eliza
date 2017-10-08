@@ -21,9 +21,14 @@ class ClientHandler(threading.Thread):
 
     def run(self):
         self.running = True
+        user_name = self.client.recv(1024)
+        print user_name + ' has connected'
         while self.running:
             msg = self.client.recv(1024)
-            print '[' + self.address[0] + ':' + str(self.address[1]) + ']: ' + msg
+            if len(msg) == 0:
+                print user_name + ' has disconnected'
+                break
+            print '[' + user_name + ']: ' + msg
 
 
 class Server(threading.Thread):
@@ -56,7 +61,7 @@ if __name__ == '__main__':
     #server = SocketServer.TCPServer((host, port), serverhandler.RequestHandler)
     #server.serve_forever()
 
-    server = Server('localhost', 9999)
+    server = Server('192.168.0.113', 9999)
     server.start()
     server.join()
 
