@@ -11,8 +11,28 @@ connection_config = {
 }
 
 
+def user_exists(username):
+    try:
+        connection = mysql.connector.connect(**connection_config)
+        cursor = connection.cursor()
+        sql = "SELECT account_id FROM accounts WHERE user_name = '{}'".format(username)
+        cursor.execute(sql)
+        dbdata = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        if len(dbdata) > 0:
+            return True
+        else:
+            return False
+    except mysql.connector.errors.Error as err:
+        print 'MySQL error: {}'.format(err)
+        return False
+
+
 def create_user_account(username, password):
     try:
+        if len(username) < 5 or len(password) < 5 or user_exists(username):
+            return False
         cipher = XOR.new('random')
         data = (username, base64.b64encode(cipher.encrypt(password)))
         connection = mysql.connector.connect(**connection_config)
@@ -24,9 +44,10 @@ def create_user_account(username, password):
         connection.commit()
         cursor.close()
         connection.close()
+        return True
     except mysql.connector.errors.Error as err:
         print 'MySQL error: {}'.format(err)
-        exit(1)
+        return False
 
 
 def user_login(username, password):
@@ -47,4 +68,4 @@ def user_login(username, password):
             return dbdata[0]
     except mysql.connector.errors.Error as err:
         print 'MySQL error: {}'.format(err)
-        exit(1)
+        return None

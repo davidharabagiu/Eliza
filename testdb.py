@@ -1,11 +1,9 @@
 import dbaccess
 
 
-username = raw_input('user:')
-password = raw_input('password:')
-
-userdata = dbaccess.user_login(username, password)
-if userdata is None:
-    print 'Login failed'
+username = raw_input('user: ')
+password = raw_input('password: ')
+if dbaccess.create_user_account(username, password):
+    print 'Success'
 else:
-    print 'Logged in as {}'.format(username)
+    print 'User already exists'
