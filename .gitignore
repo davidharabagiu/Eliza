@@ -48,3 +48,4 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 *.xml___jb_tmp___
+.idea/inspectionProfiles/Project_Default.xml
