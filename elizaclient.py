@@ -20,7 +20,7 @@ if __name__ == '__main__':
             if data == '/exit':
                 break
             sock.sendall(data)
-    except socket.error, msg:
-        print msg
+    except socket.error as err:
+        print err
     finally:
         sock.close()
