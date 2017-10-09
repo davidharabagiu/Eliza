@@ -31,7 +31,14 @@ def user_exists(username):
 
 def create_user_account(username, password):
     try:
-        if len(username) < 5 or len(password) < 5 or user_exists(username):
+        if len(username) < 5:
+            print 'The user name must be at least 5 characters long'
+            return False
+        elif len(password) < 5:
+            print 'The password must be at least 5 characters long'
+            return False
+        elif user_exists(username):
+            print 'This user name already exists'
             return False
         cipher = XOR.new('random')
         data = (username, base64.b64encode(cipher.encrypt(password)))

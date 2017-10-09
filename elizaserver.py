@@ -46,6 +46,6 @@ class Server(threading.Thread):
 
 
 if __name__ == '__main__':
-    server = Server('192.168.0.113', 9999)
+    server = Server('elizaserver.ddns.net', 9999)
     server.start()
     server.join()
