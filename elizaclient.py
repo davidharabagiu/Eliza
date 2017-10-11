@@ -1,6 +1,4 @@
 import socket
-import sys
-import random
 
 
 host, port = 'elizaserver.ddns.net', 9999
@@ -10,16 +8,13 @@ if __name__ == '__main__':
 
     try:
         sock.connect((host, port))
-        if len(sys.argv) < 2:
-            username = 'User ' + str(random.randint(10000, 100000))
-        else:
-            username = sys.argv[1]
-        sock.sendall(username)
         while True:
-            data = raw_input('> ')
-            if data == '/exit':
+            request = raw_input('> ')
+            if request == 'exit':
                 break
-            sock.sendall(data)
+            sock.sendall(request)
+            response = sock.recv(1024)
+            print response
     except socket.error as err:
         print err
     finally:

@@ -17,4 +17,4 @@ def register(username, password):
     elif not dbaccess.create_user_account(username, password):
         return 'Database error'
     else:
-        return 'User account created successfully'
+        return 'User account was created successfully'
