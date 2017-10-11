@@ -1,5 +1,6 @@
 import socket
 import threading
+import serverrequests
 
 
 class ClientHandler(threading.Thread):
@@ -10,16 +11,23 @@ class ClientHandler(threading.Thread):
         self.client = client
         self.address = address
 
+    @staticmethod
+    def process_request(request):
+        if request[0] == 'register':
+            return serverrequests.register(request[1], request[2])
+
     def run(self):
         self.running = True
         user_name = self.client.recv(1024)
         print user_name + ' has connected'
         while self.running:
-            msg = self.client.recv(1024)
-            if len(msg) == 0:
+            request = self.client.recv(1024).lower()
+            if len(request) == 0:
                 print user_name + ' has disconnected'
                 break
-            print '[' + user_name + ']: ' + msg
+            print '[' + user_name + ']: ' + request
+            response = self.process_request(request.split())
+            self.client.sendall(response)
 
 
 class Server(threading.Thread):
