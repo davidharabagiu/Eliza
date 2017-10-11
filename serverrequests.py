@@ -1,4 +1,5 @@
 import dbaccess
+import utils
 
 
 def register(username, password):
@@ -50,7 +51,7 @@ def sendmsg(userfrom, message, userto, clients_logged_in):
     elif len(message) < 1:
         return 'Message can\'t be empty'
     else:
-        clients_logged_in[userto][0].sendall('msg from ' + userfrom + ': ' + message)
+        clients_logged_in[userto][0].sendall('msg from ' + userfrom + ': ' + utils.concatlist(message))
         return 'Message sent successfully'
 
 
