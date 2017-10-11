@@ -13,7 +13,7 @@ def register(username, password):
         return 'The password must be at most 40 characters long'
     elif not username.isalnum():
         return 'The username must only contain letters and digits'
-    elif dbaccess.user_exists(username):
+    elif dbaccess.user_exists(username) >= 0:
         return 'This user name already exists'
     elif not dbaccess.create_user_account(username, password):
         return 'Database error'
@@ -60,3 +60,58 @@ def queryonline(username, clients_logged_in):
         return 'Yes'
     else:
         return 'No'
+
+
+def friendrequest(username_from, username_to, clients_logged_in):
+    if username_from not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid_from = dbaccess.user_exists(username_from)
+        userid_to = dbaccess.user_exists(username_to)
+        if userid_from >= 0 and userid_to >= 0:
+            if dbaccess.friend_request_sent(userid_from, userid_to):
+                return 'Friend request already sent'
+            elif dbaccess.friend_request_sent(userid_to, userid_from):
+                return 'You already got a friend request from this user'
+            elif dbaccess.get_friendship_status(userid_from, userid_to):
+                return 'This user is already your friend'
+            elif dbaccess.create_friend_request(userid_from, userid_to):
+                return 'Friend request sent successfully'
+            else:
+                return 'Database error'
+        else:
+            return 'The user does not exist'
+
+
+def acceptfriendrequest(username_from, username_to, clients_logged_in):
+    if username_to not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid_from = dbaccess.user_exists(username_from)
+        userid_to = dbaccess.user_exists(username_to)
+        if userid_from >= 0 and userid_to >= 0:
+            if not dbaccess.friend_request_sent(userid_from, userid_to):
+                return 'There is no friend request from this user'
+            elif dbaccess.get_friendship_status(userid_from, userid_to):
+                return 'This user is already your friend'
+            elif dbaccess.accept_friend_request(userid_from, userid_to):
+                return 'Friend request accepted successfully'
+            else:
+                return 'Database error'
+        else:
+            return 'The user does not exist'
+
+
+def queryfriendship(username1, username2, clients_logged_in):
+    if username1 not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid1 = dbaccess.user_exists(username1)
+        userid2 = dbaccess.user_exists(username2)
+        if userid1 >= 0 and userid2 >= 0:
+            if dbaccess.get_friendship_status(userid1, userid2):
+                return 'Yes'
+            else:
+                return 'No'
+        else:
+            return 'The user does not exist'
