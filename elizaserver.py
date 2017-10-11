@@ -101,7 +101,7 @@ class Server(threading.Thread):
 
 
 if __name__ == '__main__':
-    server = Server('elizaserver.ddns.net', 9999, 9998)
+    server = Server('0.0.0.0', 9999, 9998)
     server.start()
 
     while True:
