@@ -11,6 +11,14 @@ create table if not exists accounts(
 	primary key(account_id)
 );
 
+create table if not exists friendrequests(
+  user_from int not null,
+  user_to int not null,
+  primary key(user_from, user_to),
+  foreign key(user_from) references accounts(account_id),
+  foreign key(user_to) references accounts(account_id)
+);
+
 create table if not exists friendships(
 	user1 int not null,
 	user2 int not null,
