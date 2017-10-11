@@ -18,3 +18,25 @@ def register(username, password):
         return 'Database error'
     else:
         return 'User account was created successfully'
+
+
+def login(username, password, clients_logged_in, client):
+    if username in clients_logged_in.keys():
+        return 'User already logged in'
+    else:
+        userdata = dbaccess.user_login(username, password)
+        if userdata is None:
+            return 'Invalid credentials'
+        else:
+            clients_logged_in[username] = (client, userdata)
+            dbaccess.update_user_online_status(userdata[0], 1)
+            return 'Login successful'
+
+
+def logout(username, clients_logged_in):
+    if username not in clients_logged_in.keys():
+        return 'User not logged in'
+    else:
+        dbaccess.update_user_online_status(clients_logged_in[username][1][0], 0)
+        del clients_logged_in[username]
+        return 'Logout successful'

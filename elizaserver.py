@@ -4,22 +4,40 @@ import serverrequests
 
 
 clients = {}
+clients_logged_in = {}
 
 
 class ClientHandler(threading.Thread):
     running = False
+    logged_in = False
+    username = ''
 
     def __init__(self, client, address):
         super(ClientHandler, self).__init__()
         self.client = client
         self.address = address
 
-    @staticmethod
-    def process_request(request):
+    def process_request(self, request):
         if request[0] == 'register':
             if len(request) < 3:
                 return 'Invalid request parameters'
             return serverrequests.register(request[1], request[2])
+        elif request[0] == 'login':
+            if len(request) < 3:
+                return 'Invalid request parameters'
+            status = serverrequests.login(request[1], request[2], clients_logged_in, clients[self.address[0]])
+            if status == 'Login successful':
+                self.logged_in = True
+                self.username = request[1]
+            return status
+        elif request[0] == 'logout':
+            if self.username == '':
+                return 'User not logged in'
+            else:
+                status = serverrequests.logout(self.username, clients_logged_in)
+                if status == 'Logout successful':
+                    self.logged_in = False
+                return status
         else:
             return 'Unknown request'
 
@@ -30,12 +48,16 @@ class ClientHandler(threading.Thread):
             try:
                 request = self.client.recv(1024).lower()
                 if len(request) == 0:
+                    serverrequests.logout(self.username, clients_logged_in)
+                    del clients[self.address[0]]
                     print self.address, 'has disconnected'
                     break
                 print '[' + str(self.address) + ']: ' + request
                 response = self.process_request(request.split())
                 self.client.sendall(response)
             except socket.error as err:
+                serverrequests.logout(self.username, clients_logged_in)
+                del clients[self.address[0]]
                 print err
                 break
 
@@ -60,7 +82,7 @@ class Server(threading.Thread):
             client2, address2 = self.socket2.accept()
             if address[0] != address2[0]:
                 continue
-            clients[address] = (client2, '')
+            clients[address[0]] = client2
             new_client = ClientHandler(client, address)
             new_client.start()
             self.clients.append(new_client)

@@ -25,7 +25,7 @@ def user_exists(username):
         else:
             return False
     except mysql.connector.errors.Error as err:
-        print 'MySQL error: {}'.format(err)
+        print err
         return False
 
 
@@ -44,7 +44,7 @@ def create_user_account(username, password):
         connection.close()
         return True
     except mysql.connector.errors.Error as err:
-        print 'MySQL error: {}'.format(err)
+        print err
         return False
 
 
@@ -54,7 +54,7 @@ def user_login(username, password):
         data = (username, base64.b64encode(cipher.encrypt(password)))
         connection = mysql.connector.connect(**connection_config)
         cursor = connection.cursor()
-        sql = ("SELECT profile_pic, description FROM accounts "
+        sql = ("SELECT account_id, profile_pic, description FROM accounts "
                "WHERE user_name = %s AND password = %s")
         cursor.execute(sql, data)
         dbdata = cursor.fetchall()
@@ -65,5 +65,19 @@ def user_login(username, password):
         else:
             return dbdata[0]
     except mysql.connector.errors.Error as err:
-        print 'MySQL error: {}'.format(err)
+        print err
         return None
+
+
+def update_user_online_status(userid, online_status):
+    try:
+        connection = mysql.connector.connect(**connection_config)
+        cursor = connection.cursor()
+        sql = ("UPDATE accounts SET online_status = %s "
+               "WHERE account_id = %s")
+        cursor.execute(sql, (online_status, userid))
+        connection.commit()
+        cursor.close()
+        connection.close()
+    except mysql.connector.errors.Error as err:
+        print err
