@@ -58,6 +58,14 @@ class ClientHandler(threading.Thread):
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.queryfriendship(self.username, request[1], clients_logged_in)
+        elif request[0] == 'queryfriendrequestsent':
+            if len(request) < 2:
+                return 'Invalid request parameters'
+            return serverrequests.queryfriendrequestsent(self.username, request[1], clients_logged_in)
+        elif request[0] == 'queryfriendrequestreceived':
+            if len(request) < 2:
+                return 'Invalid request parameters'
+            return serverrequests.queryfriendrequestreceived(self.username, request[1], clients_logged_in)
         else:
             return 'Unknown request'
 

@@ -115,3 +115,33 @@ def queryfriendship(username1, username2, clients_logged_in):
                 return 'No'
         else:
             return 'The user does not exist'
+
+
+def queryfriendrequestsent(username1, username2, clients_logged_in):
+    if username1 not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid1 = dbaccess.user_exists(username1)
+        userid2 = dbaccess.user_exists(username2)
+        if userid1 >= 0 and userid2 >= 0:
+            if dbaccess.friend_request_sent(userid1, userid2):
+                return 'Yes'
+            else:
+                return 'No'
+        else:
+            return 'The user does not exist'
+
+
+def queryfriendrequestreceived(username1, username2, clients_logged_in):
+    if username1 not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid1 = dbaccess.user_exists(username1)
+        userid2 = dbaccess.user_exists(username2)
+        if userid1 >= 0 and userid2 >= 0:
+            if dbaccess.friend_request_sent(userid2, userid1):
+                return 'Yes'
+            else:
+                return 'No'
+        else:
+            return 'The user does not exist'
