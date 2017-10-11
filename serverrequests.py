@@ -52,3 +52,10 @@ def sendmsg(userfrom, message, userto, clients_logged_in):
     else:
         clients_logged_in[userto][0].sendall('msg from ' + userfrom + ': ' + message)
         return 'Message sent successfully'
+
+
+def queryonline(username, clients_logged_in):
+    if username in clients_logged_in.keys():
+        return 'Yes'
+    else:
+        return 'No'

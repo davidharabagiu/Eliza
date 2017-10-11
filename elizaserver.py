@@ -42,6 +42,10 @@ class ClientHandler(threading.Thread):
             if len(request) < 3:
                 return 'Invalid request parameters'
             return serverrequests.sendmsg(self.username, request[2], request[1], clients_logged_in)
+        elif request[0] == 'queryonline':
+            if len(request) < 2:
+                return 'Invalid request parameters'
+            return serverrequests.queryonline(request[1], clients_logged_in)
         else:
             return 'Unknown request'
 
