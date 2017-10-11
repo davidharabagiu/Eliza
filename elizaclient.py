@@ -1,21 +1,48 @@
 import socket
+import threading
 
 
-host, port = 'elizaserver.ddns.net', 9999
+host, port1, port2 = 'elizaserver.ddns.net', 9999, 9998
+
+
+class ReceiverThread(threading.Thread):
+    running = False
+
+    def __init__(self, sock):
+        super(ReceiverThread, self).__init__()
+        self.sock = sock
+
+    def run(self):
+        running = True
+        while running:
+            try:
+                msg = self.sock.recv(1024)
+                if len(msg) == 0:
+                    break
+            except socket.error as err:
+                print err
+
 
 if __name__ == '__main__':
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    receiver = ReceiverThread(sock2)
 
     try:
-        sock.connect((host, port))
+        sock1.connect((host, port1))
+        sock2.connect((host, port2))
+
+        receiver.start()
         while True:
             request = raw_input('> ')
             if request == 'exit':
                 break
-            sock.sendall(request)
-            response = sock.recv(1024)
+            sock1.sendall(request)
+            response = sock1.recv(1024)
             print response
     except socket.error as err:
         print err
     finally:
-        sock.close()
+        sock1.close()
+        receiver.running = False
+        receiver.join()
