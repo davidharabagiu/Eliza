@@ -25,7 +25,7 @@ class ClientHandler(threading.Thread):
         elif request[0] == 'login':
             if len(request) < 3:
                 return 'Invalid request parameters'
-            status = serverrequests.login(request[1], request[2], clients_logged_in, clients[self.address[0]])
+            status = serverrequests.login(request[1], request[2], clients_logged_in, clients[self.address])
             if status == 'Login successful':
                 self.logged_in = True
                 self.username = request[1]
@@ -38,6 +38,10 @@ class ClientHandler(threading.Thread):
                 if status == 'Logout successful':
                     self.logged_in = False
                 return status
+        elif request[0] == 'sendmsg':
+            if len(request) < 3:
+                return 'Invalid request parameters'
+            return serverrequests.sendmsg(self.username, request[2], request[1], clients_logged_in)
         else:
             return 'Unknown request'
 
@@ -49,16 +53,16 @@ class ClientHandler(threading.Thread):
                 request = self.client.recv(1024).lower()
                 if len(request) == 0:
                     serverrequests.logout(self.username, clients_logged_in)
-                    del clients[self.address[0]]
+                    del clients[self.address]
                     print self.address, 'has disconnected'
                     break
                 print '[' + str(self.address) + ']: ' + request
                 response = self.process_request(request.split())
                 self.client.sendall(response)
-            except socket.error as err:
+            except socket.error:
                 serverrequests.logout(self.username, clients_logged_in)
-                del clients[self.address[0]]
-                print err
+                del clients[self.address]
+                print self.address, 'has disconnected'
                 break
 
 
@@ -82,7 +86,7 @@ class Server(threading.Thread):
             client2, address2 = self.socket2.accept()
             if address[0] != address2[0]:
                 continue
-            clients[address[0]] = client2
+            clients[address] = client2
             new_client = ClientHandler(client, address)
             new_client.start()
             self.clients.append(new_client)

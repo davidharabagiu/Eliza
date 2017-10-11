@@ -40,3 +40,15 @@ def logout(username, clients_logged_in):
         dbaccess.update_user_online_status(clients_logged_in[username][1][0], 0)
         del clients_logged_in[username]
         return 'Logout successful'
+
+
+def sendmsg(userfrom, message, userto, clients_logged_in):
+    if userfrom not in clients_logged_in.keys():
+        return 'Not logged in'
+    elif userto not in clients_logged_in.keys():
+        return 'User not online'
+    elif len(message) < 1:
+        return 'Message can\'t be empty'
+    else:
+        clients_logged_in[userto][0].sendall('msg from ' + userfrom + ': ' + message)
+        return 'Message sent successfully'

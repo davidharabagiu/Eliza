@@ -17,6 +17,7 @@ class ReceiverThread(threading.Thread):
         while running:
             try:
                 msg = self.sock.recv(1024)
+                print msg
                 if len(msg) == 0:
                     break
             except socket.error as err:
@@ -44,5 +45,6 @@ if __name__ == '__main__':
         print err
     finally:
         sock1.close()
+        sock2.close()
         receiver.running = False
         receiver.join()
