@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
         receiver.start()
         while True:
-            request = raw_input('> ')
+            request = raw_input()
             if request == 'exit':
                 break
             sock1.sendall(request)
