@@ -11,15 +11,6 @@ create table if not exists accounts(
 	primary key(account_id)
 );
 
-create table if not exists chat_rooms(
-	user1 int not null,
-	user2 int not null,
-	messaged mediumtext,
-	primary key(user1, user2),
-	foreign key(user1) references accounts(account_id),
-	foreign key(user2) references accounts(account_id)
-);
-
 create table if not exists friendships(
 	user1 int not null,
 	user2 int not null,
