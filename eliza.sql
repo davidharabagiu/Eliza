@@ -4,8 +4,8 @@ use eliza;
 create table if not exists accounts(
 	account_id int not null auto_increment,
 	user_name varchar(50) not null,
-	password varbinary(50) not null,
-	profile_pic mediumblob,
+	password varchar(50) not null,
+	profile_pic mediumtext,
 	description tinytext,
 	online_status tinyint not null,
 	primary key(account_id)
