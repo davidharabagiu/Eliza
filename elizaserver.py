@@ -82,9 +82,9 @@ class ClientHandler(threading.Thread):
             if len(request) < 3:
                 return 'Invalid request parameters'
             elif request[1] == '0':
-                return serverrequests.queryblock(self.username, request[2], clients_logged_in)
+                return serverrequests.queryblock(self.username, self.username, request[2], clients_logged_in)
             elif request[1] == '1':
-                return serverrequests.queryblock(request[2], self.username, clients_logged_in)
+                return serverrequests.queryblock(self.username, request[2], self.username, clients_logged_in)
             else:
                 return 'Invalid request parameters'
         else:

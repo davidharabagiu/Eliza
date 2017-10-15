@@ -197,7 +197,7 @@ def remove_block(userid1, userid2):
         connection = mysql.connector.connect(**connection_config)
         cursor = connection.cursor()
         sql = ("DELETE FROM blocks WHERE "
-               "userid1 = %s AND userid2 = %s")
+               "user1 = %s AND user2 = %s")
         cursor.execute(sql, (userid1, userid2))
         connection.commit()
         cursor.close()
@@ -213,7 +213,7 @@ def is_user_blocked(userid_blocking, userid_blocked):
         connection = mysql.connector.connect(**connection_config)
         cursor = connection.cursor()
         sql = ("SELECT * FROM blocks WHERE "
-               "userid1 = %s AND userid2 = %s")
+               "user1 = %s AND user2 = %s")
         cursor.execute(sql, (userid_blocking, userid_blocked))
         dbdata = cursor.fetchall()
         cursor.close()

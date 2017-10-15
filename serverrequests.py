@@ -190,7 +190,7 @@ def unblock(username1, username2, clients_logged_in):
         userid2 = dbaccess.user_exists(username2)
         if userid1 >= 0 and userid2 >= 0:
             if not dbaccess.is_user_blocked(userid1, userid2):
-                return 'You haven\' blocked this user'
+                return 'You haven\'t blocked this user'
             elif dbaccess.remove_block(userid1, userid2):
                 return 'User unblocked successfully'
             else:
@@ -199,14 +199,14 @@ def unblock(username1, username2, clients_logged_in):
             return 'This user does not exist'
 
 
-def queryblock(username1, username2, clients_logged_in):
-    if username1 not in clients_logged_in.keys():
+def queryblock(username_caller, username1, username2, clients_logged_in):
+    if username_caller not in clients_logged_in.keys():
         return 'Not logged in'
     else:
         userid1 = dbaccess.user_exists(username1)
         userid2 = dbaccess.user_exists(username2)
         if userid1 >= 0 and userid2 >= 0:
-            if not dbaccess.is_user_blocked(userid1, userid2):
+            if dbaccess.is_user_blocked(userid1, userid2):
                 return 'Yes'
             else:
                 return 'No'
