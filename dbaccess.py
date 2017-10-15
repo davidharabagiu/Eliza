@@ -208,7 +208,7 @@ def remove_block(userid1, userid2):
         return False
 
 
-def is_user_blocked(userid_blocking, userid_blocked)
+def is_user_blocked(userid_blocking, userid_blocked):
     try:
         connection = mysql.connector.connect(**connection_config)
         cursor = connection.cursor()
