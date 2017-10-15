@@ -145,3 +145,21 @@ def queryfriendrequestreceived(username1, username2, clients_logged_in):
                 return 'No'
         else:
             return 'The user does not exist'
+
+
+def unfriend(username1, username2, clients_logged_in):
+    if username1 not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid1 = dbaccess.user_exists(username1)
+        userid2 = dbaccess.user_exists(username2)
+        if userid1 >= 0 and userid2 >= 0:
+            if dbaccess.get_friendship_status(userid1, userid2):
+                if dbaccess.delete_friendship(userid1, userid2):
+                    return 'You are no longer friends'
+                else:
+                    return 'Database error'
+            else:
+                return 'You are not a friend of this user'
+        else:
+            return 'This user does not exist'

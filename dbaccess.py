@@ -157,3 +157,20 @@ def accept_friend_request(userid1, userid2):
     except mysql.connector.errors.Error as err:
         print err
         return False
+
+
+def delete_friendship(userid1, userid2):
+    try:
+        connection = mysql.connector.connect(**connection_config)
+        cursor = connection.cursor()
+        sql = ("DELETE FROM friendships WHERE "
+               "(user1 = %s AND user2 = %s) OR "
+               "(user1 = %s AND user2 = %s)")
+        cursor.execute(sql, (userid1, userid2, userid2, userid1))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return True
+    except mysql.connector.errors.Error as err:
+        print err
+        return False
