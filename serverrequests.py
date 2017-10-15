@@ -163,3 +163,52 @@ def unfriend(username1, username2, clients_logged_in):
                 return 'You are not a friend of this user'
         else:
             return 'This user does not exist'
+
+
+def block(username1, username2, clients_logged_in):
+    if username1 not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid1 = dbaccess.user_exists(username1)
+        userid2 = dbaccess.user_exists(username2)
+        if userid1 >= 0 and userid2 >= 0:
+            if dbaccess.is_user_blocked(userid1, userid2):
+                return 'You already blocked this user'
+            elif dbaccess.add_block(userid1, userid2):
+                return 'User blocked successfully'
+            else:
+                return 'Database error'
+        else:
+            return 'This user does not exist'
+
+
+def unblock(username1, username2, clients_logged_in):
+    if username1 not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid1 = dbaccess.user_exists(username1)
+        userid2 = dbaccess.user_exists(username2)
+        if userid1 >= 0 and userid2 >= 0:
+            if not dbaccess.is_user_blocked(userid1, userid2):
+                return 'You haven\' blocked this user'
+            elif dbaccess.remove_block(userid1, userid2):
+                return 'User unblocked successfully'
+            else:
+                return 'Database error'
+        else:
+            return 'This user does not exist'
+
+
+def queryblock(username1, username2, clients_logged_in):
+    if username1 not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid1 = dbaccess.user_exists(username1)
+        userid2 = dbaccess.user_exists(username2)
+        if userid1 >= 0 and userid2 >= 0:
+            if not dbaccess.is_user_blocked(userid1, userid2):
+                return 'Yes'
+            else:
+                return 'No'
+        else:
+            return 'This user does not exist'
