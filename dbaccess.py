@@ -174,3 +174,54 @@ def delete_friendship(userid1, userid2):
     except mysql.connector.errors.Error as err:
         print err
         return False
+
+
+def add_block(userid1, userid2):
+    try:
+        connection = mysql.connector.connect(**connection_config)
+        cursor = connection.cursor()
+        sql = ("INSERT INTO blocks (user1, user2) "
+               "VALUES (%s, %s)")
+        cursor.execute(sql, (userid1, userid2))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return True
+    except mysql.connector.errors.Error as err:
+        print err
+        return False
+
+
+def remove_block(userid1, userid2):
+    try:
+        connection = mysql.connector.connect(**connection_config)
+        cursor = connection.cursor()
+        sql = ("DELETE FROM blocks WHERE "
+               "userid1 = %s AND userid2 = %s")
+        cursor.execute(sql, (userid1, userid2))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return True
+    except mysql.connector.errors.Error as err:
+        print err
+        return False
+
+
+def is_user_blocked(userid_blocking, userid_blocked)
+    try:
+        connection = mysql.connector.connect(**connection_config)
+        cursor = connection.cursor()
+        sql = ("SELECT * FROM blocks WHERE "
+               "userid1 = %s AND userid2 = %s")
+        cursor.execute(sql, (userid_blocking, userid_blocked))
+        dbdata = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        if len(dbdata) == 0:
+            return False
+        else:
+            return True
+    except mysql.connector.errors.Error as err:
+        print err
+        return False
