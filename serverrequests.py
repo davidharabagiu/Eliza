@@ -169,7 +169,7 @@ def unfriend(username1, username2, clients_logged_in):
             return 'This user does not exist'
 
 
-def block(username1, username2, clients_logged_in):
+def blockuser(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
         return 'Not logged in'
     else:
@@ -186,7 +186,7 @@ def block(username1, username2, clients_logged_in):
             return 'This user does not exist'
 
 
-def unblock(username1, username2, clients_logged_in):
+def unblockuser(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
         return 'Not logged in'
     else:

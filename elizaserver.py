@@ -70,14 +70,14 @@ class ClientHandler(threading.Thread):
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.unfriend(self.username, request[1], clients_logged_in)
-        elif request[0] == 'block':
+        elif request[0] == 'blockuser':
             if len(request) < 2:
                 return 'Invalid request parameters'
-            return serverrequests.block(self.username, request[1], clients_logged_in)
-        elif request[0] == 'unblock':
+            return serverrequests.blockuser(self.username, request[1], clients_logged_in)
+        elif request[0] == 'unblockuser':
             if len(request) < 2:
                 return 'Invalid request parameters'
-            return serverrequests.unblock(self.username, request[1], clients_logged_in)
+            return serverrequests.unblockuser(self.username, request[1], clients_logged_in)
         elif request[0] == 'queryblock':
             if len(request) < 3:
                 return 'Invalid request parameters'
