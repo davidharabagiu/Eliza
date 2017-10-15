@@ -50,6 +50,10 @@ def sendmsg(userfrom, message, userto, clients_logged_in):
         return 'User not online'
     elif len(message) < 1:
         return 'Message can\'t be empty'
+    elif dbaccess.is_user_blocked(clients_logged_in[userto][1][0], clients_logged_in[userfrom][1][0]):
+        return 'This user blocked you'
+    elif dbaccess.is_user_blocked(clients_logged_in[userfrom][1][0], clients_logged_in[userto][1][0]):
+        return 'You have blocked this user'
     else:
         clients_logged_in[userto][0].sendall('msg from ' + userfrom + ': ' + utils.concatlist(message))
         return 'Message sent successfully'
