@@ -41,3 +41,11 @@ create table if not exists favorite_songs(
 	foreign key(account_id) references accounts(account_id),
 	foreign key(song_id) references songs(song_id)
 );
+
+create table if not exists blocks(
+  user1 int not null,
+  user2 int not null,
+  primary key(user1, user2),
+  foreign key(user1) references accounts(account_id),
+  foreign key(user2) references accounts(account_id)
+);
