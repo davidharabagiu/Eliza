@@ -246,3 +246,20 @@ def get_friends(userid):
     except mysql.connector.errors.Error as err:
         print err
         return None
+
+
+def change_password(userid, new_pass):
+    try:
+        connection = mysql.connector.connect(**connection_config)
+        cursor = connection.cursor()
+        cipher = XOR.new('random')
+        new_pass_encrypted = base64.b64encode(cipher.encrypt(new_pass))
+        sql = "UPDATE accounts SET password = %s WHERE account_id = %s"
+        cursor.execute(sql, (new_pass_encrypted, userid))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return True
+    except mysql.connector.errors.Error as err:
+        print err
+        return False

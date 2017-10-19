@@ -231,3 +231,14 @@ def queryfriends(username, clients_logged_in):
                 return 'Query friend list successful\n' + str(friendlist)
         else:
             return 'This user does not exist'
+
+
+def changepassword(username, old_pass, new_pass, clients_logged_in):
+    if username not in clients_logged_in.keys():
+        return 'Not logged in'
+    elif dbaccess.user_login(username, old_pass) is None:
+        return 'Old password incorrect'
+    elif dbaccess.change_password(dbaccess.user_exists(username), new_pass):
+        return 'Password changed successfully'
+    else:
+        return 'Database error'
