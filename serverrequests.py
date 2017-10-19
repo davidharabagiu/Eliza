@@ -216,3 +216,18 @@ def queryblock(username_caller, username1, username2, clients_logged_in):
                 return 'No'
         else:
             return 'This user does not exist'
+
+
+def queryfriends(username, clients_logged_in):
+    if username not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid = dbaccess.user_exists(username)
+        if userid >= 0:
+            friendlist = dbaccess.get_friends(userid)
+            if friendlist is None:
+                return 'Database error'
+            else:
+                return 'Query friend list successful\n' + str(friendlist)
+        else:
+            return 'This user does not exist'

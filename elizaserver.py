@@ -87,6 +87,8 @@ class ClientHandler(threading.Thread):
                 return serverrequests.queryblock(self.username, request[2], self.username, clients_logged_in)
             else:
                 return 'Invalid request parameters'
+        elif request[0] == 'queryfriends':
+            return serverrequests.queryfriends(self.username, clients_logged_in)
         else:
             return 'Unknown request'
 

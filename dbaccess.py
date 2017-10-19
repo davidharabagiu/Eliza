@@ -225,3 +225,24 @@ def is_user_blocked(userid_blocking, userid_blocked):
     except mysql.connector.errors.Error as err:
         print err
         return False
+
+
+def get_friends(userid):
+    try:
+        connection = mysql.connector.connect(**connection_config)
+        cursor = connection.cursor()
+        sql = ("SELECT a.user_name, a.online_status FROM accounts a "
+               "JOIN friendships f ON (a.account_id = f.user2) "
+               "WHERE f.user1 = %s "
+               "UNION "
+               "SELECT a.user_name, a.online_status FROM accounts a "
+               "JOIN friendships f ON (a.account_id = f.user1) "
+               "WHERE f.user2 = %s")
+        cursor.execute(sql, (userid, userid))
+        dbdata = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        return dbdata
+    except mysql.connector.errors.Error as err:
+        print err
+        return None
