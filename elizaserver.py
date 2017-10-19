@@ -93,6 +93,14 @@ class ClientHandler(threading.Thread):
             if len(request) < 3:
                 return 'Invalid request parameters'
             return serverrequests.changepassword(self.username, request[1], request[2], clients_logged_in)
+        elif request[0] == 'querydescription':
+            if len(request) < 2:
+                return 'Invalid request parameters'
+            return serverrequests.querydescription(self.username, request[1], clients_logged_in)
+        elif request[0] == 'setdescription':
+            if len(request) < 2:
+                return 'Invalid request parameters'
+            return serverrequests.setdescription(self.username, request[1:], clients_logged_in)
         else:
             return 'Unknown request'
 

@@ -263,3 +263,33 @@ def change_password(userid, new_pass):
     except mysql.connector.errors.Error as err:
         print err
         return False
+
+
+def get_description(userid):
+    try:
+        connection = mysql.connector.connect(**connection_config)
+        cursor = connection.cursor()
+        sql = "SELECT description FROM accounts WHERE account_id = %s"
+        cursor.execute(sql, (userid,))
+        dbdata = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        return dbdata
+    except mysql.connector.errors.Error as err:
+        print err
+        return None
+
+
+def set_description(userid, description):
+    try:
+        connection = mysql.connector.connect(**connection_config)
+        cursor = connection.cursor()
+        sql = "UPDATE accounts SET description = %s WHERE account_id = %s"
+        cursor.execute(sql, (description, userid))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return True
+    except mysql.connector.errors.Error as err:
+        print err
+        return False

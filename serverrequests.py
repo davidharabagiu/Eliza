@@ -228,7 +228,7 @@ def queryfriends(username, clients_logged_in):
             if friendlist is None:
                 return 'Database error'
             else:
-                return 'Query friend list successful\n' + str(friendlist)
+                return 'Query friends list successful\n' + str(friendlist)
         else:
             return 'This user does not exist'
 
@@ -242,3 +242,30 @@ def changepassword(username, old_pass, new_pass, clients_logged_in):
         return 'Password changed successfully'
     else:
         return 'Database error'
+
+
+def querydescription(username_caller, username, clients_logged_in):
+    if username_caller not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid = dbaccess.user_exists(username)
+        if userid >= 0:
+            description = dbaccess.get_description(userid)
+            if description is None:
+                return 'Database error'
+            return 'Query description successful\n' + str(description[0][0])
+        else:
+            return 'This user does not exist'
+
+
+def setdescription(username, description, clients_logged_in):
+    if username not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid = dbaccess.user_exists(username)
+        if userid >= 0:
+            if not dbaccess.set_description(userid, utils.concatlist(description)):
+                return 'Database error'
+            return 'Description set successfully'
+        else:
+            return 'This user does not exist'
