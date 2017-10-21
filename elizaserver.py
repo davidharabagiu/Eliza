@@ -18,11 +18,11 @@ class ClientHandler(threading.Thread):
         self.address = address
 
     def process_request(self, request):
-        if request[0] == 'register':
+        if request[0].lower() == 'register':
             if len(request) < 3:
                 return 'Invalid request parameters'
             return serverrequests.register(request[1], request[2])
-        elif request[0] == 'login':
+        elif request[0].lower() == 'login':
             if len(request) < 3:
                 return 'Invalid request parameters'
             status = serverrequests.login(request[1], request[2], clients_logged_in, clients[self.address])
@@ -30,7 +30,7 @@ class ClientHandler(threading.Thread):
                 self.logged_in = True
                 self.username = request[1]
             return status
-        elif request[0] == 'logout':
+        elif request[0].lower() == 'logout':
             if self.username == '':
                 return 'User not logged in'
             else:
@@ -38,47 +38,47 @@ class ClientHandler(threading.Thread):
                 if status == 'Logout successful':
                     self.logged_in = False
                 return status
-        elif request[0] == 'sendmsg':
+        elif request[0].lower() == 'sendmsg':
             if len(request) < 3:
                 return 'Invalid request parameters'
             return serverrequests.sendmsg(self.username, request[2:], request[1], clients_logged_in)
-        elif request[0] == 'queryonline':
+        elif request[0].lower() == 'queryonline':
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.queryonline(request[1], clients_logged_in)
-        elif request[0] == 'friendrequest':
+        elif request[0].lower() == 'friendrequest':
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.friendrequest(self.username, request[1], clients_logged_in)
-        elif request[0] == 'acceptfriendrequest':
+        elif request[0].lower() == 'acceptfriendrequest':
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.acceptfriendrequest(request[1], self.username, clients_logged_in)
-        elif request[0] == 'queryfriendship':
+        elif request[0].lower() == 'queryfriendship':
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.queryfriendship(self.username, request[1], clients_logged_in)
-        elif request[0] == 'queryfriendrequestsent':
+        elif request[0].lower() == 'queryfriendrequestsent':
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.queryfriendrequestsent(self.username, request[1], clients_logged_in)
-        elif request[0] == 'queryfriendrequestreceived':
+        elif request[0].lower() == 'queryfriendrequestreceived':
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.queryfriendrequestreceived(self.username, request[1], clients_logged_in)
-        elif request[0] == 'unfriend':
+        elif request[0].lower() == 'unfriend':
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.unfriend(self.username, request[1], clients_logged_in)
-        elif request[0] == 'blockuser':
+        elif request[0].lower() == 'blockuser':
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.blockuser(self.username, request[1], clients_logged_in)
-        elif request[0] == 'unblockuser':
+        elif request[0].lower() == 'unblockuser':
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.unblockuser(self.username, request[1], clients_logged_in)
-        elif request[0] == 'queryblock':
+        elif request[0].lower() == 'queryblock':
             if len(request) < 3:
                 return 'Invalid request parameters'
             elif request[1] == '0':
@@ -87,17 +87,17 @@ class ClientHandler(threading.Thread):
                 return serverrequests.queryblock(self.username, request[2], self.username, clients_logged_in)
             else:
                 return 'Invalid request parameters'
-        elif request[0] == 'queryfriends':
+        elif request[0].lower() == 'queryfriends':
             return serverrequests.queryfriends(self.username, clients_logged_in)
-        elif request[0] == 'changepassword':
+        elif request[0].lower() == 'changepassword':
             if len(request) < 3:
                 return 'Invalid request parameters'
             return serverrequests.changepassword(self.username, request[1], request[2], clients_logged_in)
-        elif request[0] == 'querydescription':
+        elif request[0].lower() == 'querydescription':
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.querydescription(self.username, request[1], clients_logged_in)
-        elif request[0] == 'setdescription':
+        elif request[0].lower() == 'setdescription':
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.setdescription(self.username, request[1:], clients_logged_in)
@@ -109,7 +109,7 @@ class ClientHandler(threading.Thread):
         print self.address, 'has connected'
         while self.running:
             try:
-                request = self.client.recv(1024).lower()
+                request = self.client.recv(1024)
                 if len(request) == 0:
                     serverrequests.logout(self.username, clients_logged_in)
                     del clients[self.address]
