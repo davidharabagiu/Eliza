@@ -1,24 +1,25 @@
 import dbaccess
 import utils
+import requeststatus
 
 
 def register(username, password):
     if len(username) < 5:
-        return 'The username must be at least 5 characters long'
-    elif len(username) < 5:
-        return 'The password must be at least 5 characters long'
+        return requeststatus.STATUS_USERNAME_TOO_SHORT
+    elif len(password) < 5:
+        return requeststatus.STATUS_PASSWORD_TOO_SHORT
     elif len(username) > 20:
-        return 'The username must be at most 20 characters long'
+        return requeststatus.STATUS_USERNAME_TOO_LONG
     elif len(password) > 30:
-        return 'The password must be at most 40 characters long'
+        return requeststatus.STATUS_PASSWORD_TOO_LONG
     elif not username.isalnum():
-        return 'The username must only contain letters and digits'
+        return requeststatus.STATUS_USERNAME_NON_ALPHANUMERIC
     elif dbaccess.get_user_id(username) >= 0:
-        return 'This user name already exists'
+        return requeststatus.STATUS_USERNAME_ALREADY_EXISTS
     elif not dbaccess.create_user_account(username, password):
-        return 'Database error'
+        return requeststatus.STATUS_DATABASE_ERROR
     else:
-        return 'User account was created successfully'
+        return requeststatus.STATUS_SUCCESS
 
 
 def login(username, password, clients_logged_in, client):
