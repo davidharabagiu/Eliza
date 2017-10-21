@@ -25,12 +25,12 @@ def login(username, password, clients_logged_in, client):
     if username in clients_logged_in.keys():
         return 'User already logged in'
     else:
-        userdata = dbaccess.user_login(username, password)
-        if userdata is None:
+        userid = dbaccess.user_login(username, password)
+        if userid == -1:
             return 'Invalid credentials'
         else:
-            clients_logged_in[username] = (client, userdata)
-            dbaccess.update_user_online_status(userdata[0], 1)
+            clients_logged_in[username] = (client, userid)
+            dbaccess.update_user_online_status(userid, 1)
             return 'Login successful'
 
 
@@ -38,7 +38,7 @@ def logout(username, clients_logged_in):
     if username not in clients_logged_in.keys():
         return 'User not logged in'
     else:
-        dbaccess.update_user_online_status(clients_logged_in[username][1][0], 0)
+        dbaccess.update_user_online_status(clients_logged_in[username][1], 0)
         del clients_logged_in[username]
         return 'Logout successful'
 
@@ -50,9 +50,9 @@ def sendmsg(userfrom, message, userto, clients_logged_in):
         return 'User not online'
     elif len(message) < 1:
         return 'Message can\'t be empty'
-    elif dbaccess.is_user_blocked(clients_logged_in[userto][1][0], clients_logged_in[userfrom][1][0]):
+    elif dbaccess.is_user_blocked(clients_logged_in[userto][1], clients_logged_in[userfrom][1]):
         return 'This user blocked you'
-    elif dbaccess.is_user_blocked(clients_logged_in[userfrom][1][0], clients_logged_in[userto][1][0]):
+    elif dbaccess.is_user_blocked(clients_logged_in[userfrom][1], clients_logged_in[userto][1]):
         return 'You have blocked this user'
     else:
         clients_logged_in[userto][0].sendall('msg from ' + userfrom + ': ' + utils.concatlist(message))

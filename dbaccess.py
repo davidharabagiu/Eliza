@@ -61,7 +61,10 @@ def user_login(username, password):
            "WHERE user_name = %s AND password = %s")
     cipher = XOR.new('random')
     password_encrypted = base64.b64encode(cipher.encrypt(password))
-    return querydb(sql, (username, password_encrypted))
+    dbdata = querydb(sql, (username, password_encrypted))
+    if dbdata is None:
+        return -1
+    return dbdata[0][0]
 
 
 def update_user_online_status(userid, online_status):
