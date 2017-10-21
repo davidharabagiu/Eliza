@@ -11,7 +11,7 @@ connection_config = {
 }
 
 
-def executesql(sql, params):
+def executesql(sql, params=()):
     try:
         connection = mysql.connector.connect(**connection_config)
         cursor = connection.cursor()
@@ -25,7 +25,7 @@ def executesql(sql, params):
         return False
 
 
-def querydb(sql, params):
+def querydb(sql, params=()):
     try:
         connection = mysql.connector.connect(**connection_config)
         cursor = connection.cursor()
@@ -156,3 +156,8 @@ def get_profile_picture(userid):
 def set_profile_picture(userid, profile_picture):
     sql = "UPDATE accounts SET profile_pic = %s WHERE account_id = %s"
     return executesql(sql, (profile_picture, userid))
+
+
+def set_all_users_offline():
+    sql = "UPDATE accounts SET online_status = 0"
+    return executesql(sql)

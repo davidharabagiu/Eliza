@@ -1,6 +1,7 @@
 import socket
 import threading
 import serverrequests
+import dbaccess
 
 
 clients = {}
@@ -182,6 +183,8 @@ class Server(threading.Thread):
 
 
 if __name__ == '__main__':
+    dbaccess.set_all_users_offline()
+
     server = Server('0.0.0.0', 9999, 9998)
     server.start()
 
