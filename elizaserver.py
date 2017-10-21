@@ -11,6 +11,10 @@ class ClientHandler(threading.Thread):
     running = False
     logged_in = False
     username = ''
+    fileTransferMode = False
+    expectedFileSize = 0
+    fileData = ''
+    fileTransferBytesReceived = 0
 
     def __init__(self, client, address):
         super(ClientHandler, self).__init__()
@@ -18,6 +22,12 @@ class ClientHandler(threading.Thread):
         self.address = address
 
     def process_request(self, request):
+        if self.fileTransferMode:
+            self.fileData += request[0]
+            self.fileTransferBytesReceived += len(request[0])
+            if self.fileTransferBytesReceived >= self.expectedFileSize:
+                self.fileTransferMode = False
+            return 'Bytes received successfully'
         if request[0].lower() == 'register':
             if len(request) < 3:
                 return 'Invalid request parameters'
@@ -105,6 +115,18 @@ class ClientHandler(threading.Thread):
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.queryprofilepic(self.username, request[1], clients_logged_in)
+        elif request[0].lower() == 'setprofilepic':
+            return serverrequests.setprofilepic(self.username, self.fileData, clients_logged_in)
+        elif request[0].lower() == 'filetransfer':
+            if len(request) < 2:
+                return 'Invalid request parameters'
+            if self.username not in clients_logged_in.keys():
+                return 'Not logged in'
+            self.expectedFileSize = int(request[1])
+            self.fileTransferMode = True
+            self.fileData = ''
+            self.fileTransferBytesReceived = 0
+            return 'Initialized file transfer mode successfully'
         else:
             return 'Unknown request'
 
