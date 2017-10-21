@@ -10,35 +10,11 @@ connection_config = {
     'database': 'eliza',
 }
 
-
-def user_exists(username):
+def executesql(sql, params):
     try:
         connection = mysql.connector.connect(**connection_config)
         cursor = connection.cursor()
-        sql = "SELECT account_id FROM accounts WHERE user_name = '{}'".format(username)
-        cursor.execute(sql)
-        dbdata = cursor.fetchall()
-        cursor.close()
-        connection.close()
-        if len(dbdata) > 0:
-            return dbdata[0][0]
-        else:
-            return -1
-    except mysql.connector.errors.Error as err:
-        print err
-        return -1
-
-
-def create_user_account(username, password):
-    try:
-        cipher = XOR.new('random')
-        data = (username, base64.b64encode(cipher.encrypt(password)))
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = ("INSERT INTO accounts "
-               "(user_name, password, online_status) "
-               "VALUES (%s, %s, 0)")
-        cursor.execute(sql, data)
+        cursor.execute(sql, params)
         connection.commit()
         cursor.close()
         connection.close()
@@ -47,279 +23,113 @@ def create_user_account(username, password):
         print err
         return False
 
-
-def user_login(username, password):
+def querydb(sql, params):
     try:
-        cipher = XOR.new('random')
-        data = (username, base64.b64encode(cipher.encrypt(password)))
         connection = mysql.connector.connect(**connection_config)
         cursor = connection.cursor()
-        sql = ("SELECT account_id, profile_pic, description FROM accounts "
-               "WHERE user_name = %s AND password = %s")
-        cursor.execute(sql, data)
+        cursor.execute(sql, params)
         dbdata = cursor.fetchall()
         cursor.close()
         connection.close()
         if len(dbdata) == 0:
             return None
-        else:
-            return dbdata[0]
+        return dbdata
     except mysql.connector.errors.Error as err:
         print err
         return None
 
+def get_user_id(username):
+    sql = "SELECT account_id FROM accounts WHERE user_name = %s"
+    dbdata = querydb(sql, (username,))
+    if len(dbdata) < 0:
+        return -1
+    return dbdata[0][0]
+
+def create_user_account(username, password):
+    sql = "INSERT INTO accounts (user_name, password, online_status) VALUES (%s, %s, 0)"
+    cipher = XOR.new('random')
+    password_encrypted = base64.b64encode(cipher.encrypt(password))
+    return executesql(sql, (username, password_encrypted))
+
+def user_login(username, password):
+    sql = ("SELECT account_id FROM accounts "
+           "WHERE user_name = %s AND password = %s")
+    cipher = XOR.new('random')
+    password_encrypted = base64.b64encode(cipher.encrypt(password))
+    return querydb(sql, (username, password_encrypted))
 
 def update_user_online_status(userid, online_status):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = ("UPDATE accounts SET online_status = %s "
-               "WHERE account_id = %s")
-        cursor.execute(sql, (online_status, userid))
-        connection.commit()
-        cursor.close()
-        connection.close()
-    except mysql.connector.errors.Error as err:
-        print err
-
+    sql = "UPDATE accounts SET online_status = %s WHERE account_id = %s"
+    return executesql(sql, (online_status, userid))
 
 def create_friend_request(userid1, userid2):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = ("INSERT INTO friendrequests "
-               "(user_from, user_to) "
-               "VALUES (%s, %s)")
-        cursor.execute(sql, (userid1, userid2))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return True
-    except mysql.connector.errors.Error as err:
-        print err
-        return False
-
+    sql = "INSERT INTO friendrequests (user_from, user_to) VALUES (%s, %s)"
+    return executesql(sql, (userid1, userid2))
 
 def friend_request_sent(userid1, userid2):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = ("SELECT * FROM friendrequests "
-               "WHERE user_from = %s AND user_to = %s")
-        cursor.execute(sql, (userid1, userid2))
-        dbdata = cursor.fetchall()
-        cursor.close()
-        connection.close()
-        if len(dbdata) == 0:
-            return False
-        else:
-            return True
-    except mysql.connector.errors.Error as err:
-        print err
-        return False
-
+    sql = "SELECT * FROM friendrequests WHERE user_from = %s AND user_to = %s"
+    dbdata = querydb(sql, (userid1, userid2))
+    return dbdata is not None
 
 def get_friendship_status(userid1, userid2):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = ("SELECT * FROM friendships "
-               "WHERE (user1 = %s AND user2 = %s) OR "
-               "(user1 = %s AND user2 = %s)")
-        cursor.execute(sql, (userid1, userid2, userid2, userid1))
-        dbdata = cursor.fetchall()
-        cursor.close()
-        connection.close()
-        if len(dbdata) == 0:
-            return False
-        else:
-            return True
-    except mysql.connector.errors.Error as err:
-        print err
-        return False
-
+    sql = ("SELECT * FROM friendships WHERE (user1 = %s AND user2 = %s) OR "
+           "(user1 = %s AND user2 = %s)")
+    dbdata = querydb(sql, (userid1, userid2, userid2, userid1))
+    return dbdata is not None
 
 def accept_friend_request(userid1, userid2):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = ("DELETE FROM friendrequests WHERE "
-               "user_from = %s AND user_to = %s")
-        cursor.execute(sql, (userid1, userid2))
-        connection.commit()
-        sql = ("INSERT INTO friendships (user1, user2) "
-               "VALUES (%s, %s)")
-        cursor.execute(sql, (userid1, userid2))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return True
-    except mysql.connector.errors.Error as err:
-        print err
+    sql1 = "DELETE FROM friendrequests WHERE user_from = %s AND user_to = %s"
+    sql2 = "INSERT INTO friendships (user1, user2) VALUES (%s, %s)"
+    if not executesql(sql1, (userid1, userid2)):
         return False
-
+    return executesql(sql2, (userid1, userid2))
 
 def delete_friendship(userid1, userid2):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = ("DELETE FROM friendships WHERE "
-               "(user1 = %s AND user2 = %s) OR "
-               "(user1 = %s AND user2 = %s)")
-        cursor.execute(sql, (userid1, userid2, userid2, userid1))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return True
-    except mysql.connector.errors.Error as err:
-        print err
-        return False
-
+    sql = ("DELETE FROM friendships WHERE (user1 = %s AND user2 = %s) OR "
+           "(user1 = %s AND user2 = %s)")
+    return executesql(sql, (userid1, userid2, userid2, userid1))
 
 def add_block(userid1, userid2):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = ("INSERT INTO blocks (user1, user2) "
-               "VALUES (%s, %s)")
-        cursor.execute(sql, (userid1, userid2))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return True
-    except mysql.connector.errors.Error as err:
-        print err
-        return False
-
+    sql = "INSERT INTO blocks (user1, user2) VALUES (%s, %s)"
+    return executesql(sql, (userid1, userid2))
 
 def remove_block(userid1, userid2):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = ("DELETE FROM blocks WHERE "
-               "user1 = %s AND user2 = %s")
-        cursor.execute(sql, (userid1, userid2))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return True
-    except mysql.connector.errors.Error as err:
-        print err
-        return False
-
+    sql = "DELETE FROM blocks WHERE user1 = %s AND user2 = %s"
+    return executesql(sql, (userid1, userid2))
 
 def is_user_blocked(userid_blocking, userid_blocked):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = ("SELECT * FROM blocks WHERE "
-               "user1 = %s AND user2 = %s")
-        cursor.execute(sql, (userid_blocking, userid_blocked))
-        dbdata = cursor.fetchall()
-        cursor.close()
-        connection.close()
-        if len(dbdata) == 0:
-            return False
-        else:
-            return True
-    except mysql.connector.errors.Error as err:
-        print err
-        return False
-
+    sql = "SELECT * FROM blocks WHERE user1 = %s AND user2 = %s"
+    dbdata = querydb(sql, (userid_blocking, userid_blocked))
+    return dbdata is not None
 
 def get_friends(userid):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = ("SELECT a.user_name, a.online_status FROM accounts a "
-               "JOIN friendships f ON (a.account_id = f.user2) "
-               "WHERE f.user1 = %s "
-               "UNION "
-               "SELECT a.user_name, a.online_status FROM accounts a "
-               "JOIN friendships f ON (a.account_id = f.user1) "
-               "WHERE f.user2 = %s")
-        cursor.execute(sql, (userid, userid))
-        dbdata = cursor.fetchall()
-        cursor.close()
-        connection.close()
-        return dbdata
-    except mysql.connector.errors.Error as err:
-        print err
-        return None
-
+    sql = ("SELECT a.user_name, a.online_status FROM accounts a "
+           "JOIN friendships f ON (a.account_id = f.user2) "
+           "WHERE f.user1 = %s "
+           "UNION "
+           "SELECT a.user_name, a.online_status FROM accounts a "
+           "JOIN friendships f ON (a.account_id = f.user1) "
+           "WHERE f.user2 = %s")
+    return querydb(sql, (userid, userid))
 
 def change_password(userid, new_pass):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        cipher = XOR.new('random')
-        new_pass_encrypted = base64.b64encode(cipher.encrypt(new_pass))
-        sql = "UPDATE accounts SET password = %s WHERE account_id = %s"
-        cursor.execute(sql, (new_pass_encrypted, userid))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return True
-    except mysql.connector.errors.Error as err:
-        print err
-        return False
-
+    sql = "UPDATE accounts SET password = %s WHERE account_id = %s"
+    cipher = XOR.new('random')
+    new_pass_encrypted = base64.b64encode(cipher.encrypt(new_pass))
+    return executesql(sql, (new_pass_encrypted, userid))
 
 def get_description(userid):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = "SELECT description FROM accounts WHERE account_id = %s"
-        cursor.execute(sql, (userid,))
-        dbdata = cursor.fetchall()
-        cursor.close()
-        connection.close()
-        return dbdata
-    except mysql.connector.errors.Error as err:
-        print err
-        return None
-
+    sql = "SELECT description FROM accounts WHERE account_id = %s"
+    return querydb(sql, (userid,))
 
 def set_description(userid, description):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = "UPDATE accounts SET description = %s WHERE account_id = %s"
-        cursor.execute(sql, (description, userid))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return True
-    except mysql.connector.errors.Error as err:
-        print err
-        return False
-
+    sql = "UPDATE accounts SET description = %s WHERE account_id = %s"
+    return executesql(sql, (description, userid))
 
 def get_profile_picture(userid):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = "SELECT profile_pic FROM accounts WHERE account_id = %s"
-        cursor.execute(sql, (userid,))
-        dbdata = cursor.fetchall()
-        cursor.close()
-        connection.close()
-        return dbdata
-    except mysql.connector.errors.Error as err:
-        print err
-        return None
-
+    sql = "SELECT profile_pic FROM accounts WHERE account_id = %s"
+    return querydb(sql, (userid,))
 
 def set_profile_picture(userid, profile_picture):
-    try:
-        connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
-        sql = "UPDATE accounts SET profile_pic = %s WHERE account_id = %s"
-        cursor.execute(sql, (profile_picture, userid))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return True
-    except mysql.connector.errors.Error as err:
-        print err
-        return False
+    sql = "UPDATE accounts SET profile_pic = %s WHERE account_id = %s"
+    return executesql(sql, (profile_picture, userid))

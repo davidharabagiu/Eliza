@@ -13,7 +13,7 @@ def register(username, password):
         return 'The password must be at most 40 characters long'
     elif not username.isalnum():
         return 'The username must only contain letters and digits'
-    elif dbaccess.user_exists(username) >= 0:
+    elif dbaccess.get_user_id(username) >= 0:
         return 'This user name already exists'
     elif not dbaccess.create_user_account(username, password):
         return 'Database error'
@@ -70,8 +70,8 @@ def friendrequest(username_from, username_to, clients_logged_in):
     if username_from not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid_from = dbaccess.user_exists(username_from)
-        userid_to = dbaccess.user_exists(username_to)
+        userid_from = dbaccess.get_user_id(username_from)
+        userid_to = dbaccess.get_user_id(username_to)
         if userid_from >= 0 and userid_to >= 0:
             if dbaccess.friend_request_sent(userid_from, userid_to):
                 return 'Friend request already sent'
@@ -91,8 +91,8 @@ def acceptfriendrequest(username_from, username_to, clients_logged_in):
     if username_to not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid_from = dbaccess.user_exists(username_from)
-        userid_to = dbaccess.user_exists(username_to)
+        userid_from = dbaccess.get_user_id(username_from)
+        userid_to = dbaccess.get_user_id(username_to)
         if userid_from >= 0 and userid_to >= 0:
             if not dbaccess.friend_request_sent(userid_from, userid_to):
                 return 'There is no friend request from this user'
@@ -110,8 +110,8 @@ def queryfriendship(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid1 = dbaccess.user_exists(username1)
-        userid2 = dbaccess.user_exists(username2)
+        userid1 = dbaccess.get_user_id(username1)
+        userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if dbaccess.get_friendship_status(userid1, userid2):
                 return 'Yes'
@@ -125,8 +125,8 @@ def queryfriendrequestsent(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid1 = dbaccess.user_exists(username1)
-        userid2 = dbaccess.user_exists(username2)
+        userid1 = dbaccess.get_user_id(username1)
+        userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if dbaccess.friend_request_sent(userid1, userid2):
                 return 'Yes'
@@ -140,8 +140,8 @@ def queryfriendrequestreceived(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid1 = dbaccess.user_exists(username1)
-        userid2 = dbaccess.user_exists(username2)
+        userid1 = dbaccess.get_user_id(username1)
+        userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if dbaccess.friend_request_sent(userid2, userid1):
                 return 'Yes'
@@ -155,8 +155,8 @@ def unfriend(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid1 = dbaccess.user_exists(username1)
-        userid2 = dbaccess.user_exists(username2)
+        userid1 = dbaccess.get_user_id(username1)
+        userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if dbaccess.get_friendship_status(userid1, userid2):
                 if dbaccess.delete_friendship(userid1, userid2):
@@ -173,8 +173,8 @@ def blockuser(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid1 = dbaccess.user_exists(username1)
-        userid2 = dbaccess.user_exists(username2)
+        userid1 = dbaccess.get_user_id(username1)
+        userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if dbaccess.is_user_blocked(userid1, userid2):
                 return 'You already blocked this user'
@@ -190,8 +190,8 @@ def unblockuser(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid1 = dbaccess.user_exists(username1)
-        userid2 = dbaccess.user_exists(username2)
+        userid1 = dbaccess.get_user_id(username1)
+        userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if not dbaccess.is_user_blocked(userid1, userid2):
                 return 'You haven\'t blocked this user'
@@ -207,8 +207,8 @@ def queryblock(username_caller, username1, username2, clients_logged_in):
     if username_caller not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid1 = dbaccess.user_exists(username1)
-        userid2 = dbaccess.user_exists(username2)
+        userid1 = dbaccess.get_user_id(username1)
+        userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if dbaccess.is_user_blocked(userid1, userid2):
                 return 'Yes'
@@ -222,7 +222,7 @@ def queryfriends(username, clients_logged_in):
     if username not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid = dbaccess.user_exists(username)
+        userid = dbaccess.get_user_id(username)
         if userid >= 0:
             friendlist = dbaccess.get_friends(userid)
             if friendlist is None:
@@ -238,7 +238,7 @@ def changepassword(username, old_pass, new_pass, clients_logged_in):
         return 'Not logged in'
     elif dbaccess.user_login(username, old_pass) is None:
         return 'Old password incorrect'
-    elif dbaccess.change_password(dbaccess.user_exists(username), new_pass):
+    elif dbaccess.change_password(dbaccess.get_user_id(username), new_pass):
         return 'Password changed successfully'
     else:
         return 'Database error'
@@ -248,7 +248,7 @@ def querydescription(username_caller, username, clients_logged_in):
     if username_caller not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid = dbaccess.user_exists(username)
+        userid = dbaccess.get_user_id(username)
         if userid >= 0:
             description = dbaccess.get_description(userid)
             if description is None:
@@ -262,7 +262,7 @@ def setdescription(username, description, clients_logged_in):
     if username not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid = dbaccess.user_exists(username)
+        userid = dbaccess.get_user_id(username)
         if userid >= 0:
             if not dbaccess.set_description(userid, utils.concatlist(description)):
                 return 'Database error'
@@ -275,7 +275,7 @@ def queryprofilepic(username_caller, username, clients_logged_in):
     if username_caller not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid = dbaccess.user_exists(username)
+        userid = dbaccess.get_user_id(username)
         if userid >= 0:
             description = dbaccess.get_profile_picture(userid)
             if description is None:
@@ -289,7 +289,7 @@ def setprofilepic(username, profile_pic, clients_logged_in):
     if username not in clients_logged_in.keys():
         return 'Not logged in'
     else:
-        userid = dbaccess.user_exists(username)
+        userid = dbaccess.get_user_id(username)
         if userid >= 0:
             if not dbaccess.set_profile_picture(userid, profile_pic):
                 return 'Database error'
