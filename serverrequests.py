@@ -269,3 +269,30 @@ def setdescription(username, description, clients_logged_in):
             return 'Description set successfully'
         else:
             return 'This user does not exist'
+
+
+def queryprofilepic(username_caller, username, clients_logged_in):
+    if username_caller not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid = dbaccess.user_exists(username)
+        if userid >= 0:
+            description = dbaccess.get_profile_picture(userid)
+            if description is None:
+                return 'Database error'
+            return 'Query profile picture successful\n' + str(description[0][0])
+        else:
+            return 'This user does not exist'
+
+
+def setprofilepic(username, profile_pic, clients_logged_in):
+    if username not in clients_logged_in.keys():
+        return 'Not logged in'
+    else:
+        userid = dbaccess.user_exists(username)
+        if userid >= 0:
+            if not dbaccess.set_profile_picture(userid, profile_pic):
+                return 'Database error'
+            return 'Profile picture set successfully'
+        else:
+            return 'This user does not exist'

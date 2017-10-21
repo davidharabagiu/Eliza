@@ -293,3 +293,33 @@ def set_description(userid, description):
     except mysql.connector.errors.Error as err:
         print err
         return False
+
+
+def get_profile_picture(userid):
+    try:
+        connection = mysql.connector.connect(**connection_config)
+        cursor = connection.cursor()
+        sql = "SELECT profile_pic FROM accounts WHERE account_id = %s"
+        cursor.execute(sql, (userid,))
+        dbdata = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        return dbdata
+    except mysql.connector.errors.Error as err:
+        print err
+        return None
+
+
+def set_profile_picture(userid, profile_picture):
+    try:
+        connection = mysql.connector.connect(**connection_config)
+        cursor = connection.cursor()
+        sql = "UPDATE accounts SET profile_pic = %s WHERE account_id = %s"
+        cursor.execute(sql, (profile_picture, userid))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return True
+    except mysql.connector.errors.Error as err:
+        print err
+        return False

@@ -101,6 +101,10 @@ class ClientHandler(threading.Thread):
             if len(request) < 2:
                 return 'Invalid request parameters'
             return serverrequests.setdescription(self.username, request[1:], clients_logged_in)
+        elif request[0].lower() == 'queryprofilepic':
+            if len(request) < 2:
+                return 'Invalid request parameters'
+            return serverrequests.queryprofilepic(self.username, request[1], clients_logged_in)
         else:
             return 'Unknown request'
 
