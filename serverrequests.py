@@ -56,7 +56,7 @@ def sendmsg(userfrom, message, userto, clients_logged_in):
     elif dbaccess.is_user_blocked(clients_logged_in[userfrom][1], clients_logged_in[userto][1]):
         return requeststatus.STATUS_RECEIVER_BLOCKED
     else:
-        clients_logged_in[userto][0].sendall('msg from ' + userfrom + ': ' + utils.concatlist(message))
+        clients_logged_in[userto][0].sendall('msg from ' + userfrom + ': ' + utils.concatlist(message, ' '))
         return requeststatus.STATUS_SUCCESS
 
 
@@ -265,7 +265,7 @@ def setdescription(username, description, clients_logged_in):
     else:
         userid = dbaccess.get_user_id(username)
         if userid >= 0:
-            if not dbaccess.set_description(userid, utils.concatlist(description)):
+            if not dbaccess.set_description(userid, utils.concatlist(description, ' ')):
                 return requeststatus.STATUS_DATABASE_ERROR
             return requeststatus.STATUS_SUCCESS
         else:
