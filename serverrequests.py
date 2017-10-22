@@ -60,7 +60,9 @@ def sendmsg(userfrom, message, userto, clients_logged_in):
         return requeststatus.STATUS_SUCCESS
 
 
-def queryonline(username, clients_logged_in):
+def queryonline(username_caller, username, clients_logged_in):
+    if username_caller not in clients_logged_in.keys():
+        return requeststatus.STATUS_NOT_LOGGED_IN
     if username in clients_logged_in.keys():
         return requeststatus.QUERYRESPONSE_TRUE
     else:

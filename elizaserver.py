@@ -55,7 +55,7 @@ class ClientHandler(threading.Thread):
         elif request[0].lower() == 'queryonline':
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
-            return serverrequests.queryonline(request[1], clients_logged_in)
+            return serverrequests.queryonline(self.username, request[1], clients_logged_in)
         elif request[0].lower() == 'friendrequest':
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
