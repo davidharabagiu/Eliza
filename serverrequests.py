@@ -237,6 +237,10 @@ def queryfriends(username, clients_logged_in):
 def changepassword(username, old_pass, new_pass, clients_logged_in):
     if username not in clients_logged_in.keys():
         return requeststatus.STATUS_NOT_LOGGED_IN
+    elif len(new_pass) < 5:
+        return requeststatus.STATUS_PASSWORD_TOO_SHORT
+    elif len(new_pass) > 30:
+        return requeststatus.STATUS_PASSWORD_TOO_LONG
     elif dbaccess.user_login(username, old_pass) is None:
         return requeststatus.STATUS_INVALID_PASSWORD
     elif dbaccess.change_password(dbaccess.get_user_id(username), new_pass):
