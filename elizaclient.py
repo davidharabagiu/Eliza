@@ -1,5 +1,6 @@
 import socket
 import threading
+import requeststatus
 
 
 host, port1, port2 = 'elizaserver.ddns.net', 9999, 9998
@@ -13,8 +14,8 @@ class ReceiverThread(threading.Thread):
         self.sock = sock
 
     def run(self):
-        running = True
-        while running:
+        self.running = True
+        while self.running:
             try:
                 msg = self.sock.recv(1024)
                 print msg
@@ -39,8 +40,10 @@ if __name__ == '__main__':
             if request == 'exit':
                 break
             sock1.sendall(request)
-            response = sock1.recv(1024)
-            print response
+            response = sock1.recv(1024).splitlines()
+            print requeststatus.status_messages[int(response[0])]
+            for i in range(1, len(response)):
+                print response[i]
     except socket.error as err:
         print err
     finally:
