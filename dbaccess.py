@@ -44,7 +44,7 @@ def querydb(sql, params=()):
 def get_user_id(username):
     sql = "SELECT account_id FROM accounts WHERE user_name = %s"
     dbdata = querydb(sql, (username,))
-    if len(dbdata) < 0:
+    if dbdata is None:
         return -1
     return dbdata[0][0]
 

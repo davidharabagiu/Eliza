@@ -11,18 +11,17 @@ clients_logged_in = {}
 
 
 class ClientHandler(threading.Thread):
-    running = False
-    logged_in = False
-    username = ''
-    fileTransferMode = False
-    expectedFileSize = 0
-    fileData = ''
-    fileTransferBytesReceived = 0
-
     def __init__(self, client, address):
         super(ClientHandler, self).__init__()
         self.client = client
         self.address = address
+        self.logged_in = False
+        self.username = ''
+        self.fileTransferMode = False
+        self.expectedFileSize = 0
+        self.fileData = ''
+        self.fileTransferBytesReceived = 0
+        self.running = False
 
     def process_request(self, request):
         if self.fileTransferMode:
@@ -177,8 +176,6 @@ class ClientHandler(threading.Thread):
 
 
 class Server(threading.Thread):
-    running = False
-
     def __init__(self, host, port1, port2):
         super(Server, self).__init__()
         self.clients = []
@@ -188,6 +185,7 @@ class Server(threading.Thread):
         self.socket2 = socket.socket()
         self.socket2.bind((host, port2))
         self.socket2.listen(5)
+        self.running = False
 
     def run(self):
         self.running = True

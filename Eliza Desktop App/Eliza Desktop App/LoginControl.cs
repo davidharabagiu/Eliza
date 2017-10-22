@@ -12,21 +12,20 @@ namespace Eliza_Desktop_App
 {
     public partial class LoginControl : UserControl
     {
-        private ElizaClient elizaClient;
+        public ElizaClient ClientProcess { get; set; }
 
-        public LoginControl(ElizaClient elizaClient)
+        public LoginControl()
         {
-            this.elizaClient = elizaClient;
             InitializeComponent();
         }
 
         private void buttonLogin_Click(object sender, EventArgs e)
         {
-            elizaClient.SendRequest(String.Format(
+            ClientProcess.SendRequest(String.Format(
                 "login {0} {1}",
                 textUsername.Text,
                 textPassword.Text));
-            MessageBox.Show(elizaClient.ReceiveResponse().ToString());
+            MessageBox.Show(ClientProcess.ReceiveResponse().ToString());
         }
     }
 }

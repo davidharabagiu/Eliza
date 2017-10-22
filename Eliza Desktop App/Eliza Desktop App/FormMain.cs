@@ -12,17 +12,9 @@ namespace Eliza_Desktop_App
 {
     public partial class FormMain : Form
     {
-        private ElizaClient elizaClient;
-
         public FormMain(ElizaClient elizaClient)
         {
-            this.elizaClient = elizaClient;
-            InitializeComponent(elizaClient);
-        }
-
-        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            elizaClient.Close();
+            InitializeComponent();
         }
     }
 }
