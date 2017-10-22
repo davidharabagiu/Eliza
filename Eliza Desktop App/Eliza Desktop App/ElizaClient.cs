@@ -7,7 +7,7 @@ namespace Eliza_Desktop_App
         public ElizaClient() : base()
         {
             StartInfo.FileName = "python";
-            StartInfo.Arguments = @"d:\IS\Eliza\elizaclient.py";
+            StartInfo.Arguments = @"d:\Projects\Eliza\elizaclient.py";
             StartInfo.UseShellExecute = false;
             StartInfo.RedirectStandardInput = true;
             StartInfo.RedirectStandardOutput = true;
