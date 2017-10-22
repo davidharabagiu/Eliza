@@ -29,6 +29,10 @@ if __name__ == '__main__':
     sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     receiver = ReceiverThread(sock2)
+    fileTransferMode = False
+    expectedFileSize = 0
+    fileData = ''
+    fileTransferBytesReceived = 0
 
     try:
         sock1.connect((host, port1))
@@ -36,14 +40,27 @@ if __name__ == '__main__':
 
         receiver.start()
         while True:
-            request = raw_input()
-            if request == 'exit':
-                break
-            sock1.sendall(request)
-            response = sock1.recv(1024).splitlines()
-            print requeststatus.status_messages[int(response[0])]
-            for i in range(1, len(response)):
-                print response[i]
+            if fileTransferMode:
+                response = sock1.recv(1024)
+                fileTransferBytesReceived += len(response)
+                fileData += response
+                if fileTransferBytesReceived >= expectedFileSize:
+                    print fileData
+                    fileTransferMode = False
+            else:
+                request = raw_input()
+                if request == 'exit':
+                    break
+                sock1.sendall(request)
+                response = sock1.recv(1024).splitlines()
+                print requeststatus.status_messages[int(response[0])]
+                for i in range(1, len(response)):
+                    print response[i]
+                if request.startswith('queryprofilepic '):
+                    fileTransferMode = True
+                    expectedFileSize = int(response[1])
+                    fileData = ''
+                    fileTransferBytesReceived = 0
     except socket.error as err:
         print err
     finally:

@@ -287,7 +287,7 @@ def queryprofilepic(username_caller, username, clients_logged_in):
             profile_pic = dbaccess.get_profile_picture(userid)
             if profile_pic is None:
                 return requeststatus.STATUS_DATABASE_ERROR
-            return requeststatus.STATUS_SUCCESS, str(profile_pic[0][0])
+            return requeststatus.STATUS_SUCCESS, len(str(profile_pic[0][0])), str(profile_pic[0][0])
         else:
             return requeststatus.STATUS_NON_EXISTENT_USER
 

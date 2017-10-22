@@ -132,9 +132,22 @@ class ClientHandler(threading.Thread):
 
     def run(self):
         self.running = True
+        file_transfer = False
+        file_data = ''
+        file_bytes_sent = 0
+        file_bytes_to_send = 0
         print self.address, 'has connected'
         while self.running:
             try:
+                if file_transfer:
+                    while file_bytes_sent < file_bytes_to_send:
+                        self.client.sendall(file_data[:min(1024, len(file_data))])
+                        if len(file_data) <= 1024:
+                            file_data = ''
+                        else:
+                            file_data = file_data[1024:]
+                        file_bytes_sent += 1024
+                    file_transfer = False
                 request = self.client.recv(1024)
                 if len(request) == 0:
                     serverrequests.logout(self.username, clients_logged_in)
@@ -142,12 +155,20 @@ class ClientHandler(threading.Thread):
                     print self.address, 'has disconnected'
                     break
                 print '[' + str(self.address) + ']: ' + request
-                response = self.process_request(request.split())
+                request = request.split()
+                response = self.process_request(request)
+                if request[0].lower() == 'queryprofilepic':
+                    file_data = response[2]
+                    file_bytes_sent = 0
+                    file_bytes_to_send = len(response[2])
+                    response = (response[0], response[1])
                 if type(response) is tuple:
                     response = utils.concatlist(response, '\n')
                 else:
                     response = str(response)
                 self.client.sendall(response)
+                if request[0].lower() == 'queryprofilepic':
+                    file_transfer = True
             except socket.error:
                 serverrequests.logout(self.username, clients_logged_in)
                 del clients[self.address]
