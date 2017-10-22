@@ -7,10 +7,11 @@ host, port1, port2 = 'elizaserver.ddns.net', 9999, 9998
 
 
 class ReceiverThread(threading.Thread):
+    running = False
+
     def __init__(self, sock):
         super(ReceiverThread, self).__init__()
         self.sock = sock
-        self.running = False
 
     def run(self):
         self.running = True
@@ -22,7 +23,6 @@ class ReceiverThread(threading.Thread):
                     break
             except socket.error as err:
                 print err
-                break
 
 
 if __name__ == '__main__':
