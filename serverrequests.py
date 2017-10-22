@@ -24,276 +24,276 @@ def register(username, password):
 
 def login(username, password, clients_logged_in, client):
     if username in clients_logged_in.keys():
-        return 'User already logged in'
+        return requeststatus.STATUS_ALREADY_LOGGED_IN
     else:
         userid = dbaccess.user_login(username, password)
         if userid == -1:
-            return 'Invalid credentials'
+            return requeststatus.STATUS_INVALID_CREDENTIALS
         else:
             clients_logged_in[username] = (client, userid)
             dbaccess.update_user_online_status(userid, 1)
-            return 'Login successful'
+            return requeststatus.STATUS_SUCCESS
 
 
 def logout(username, clients_logged_in):
     if username not in clients_logged_in.keys():
-        return 'User not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         dbaccess.update_user_online_status(clients_logged_in[username][1], 0)
         del clients_logged_in[username]
-        return 'Logout successful'
+        return requeststatus.STATUS_SUCCESS
 
 
 def sendmsg(userfrom, message, userto, clients_logged_in):
     if userfrom not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     elif userto not in clients_logged_in.keys():
-        return 'User not online'
+        return requeststatus.STATUS_USER_NOT_ONLINE
     elif len(message) < 1:
-        return 'Message can\'t be empty'
+        return requeststatus.STATUS_ERROR_EMPTY_MESSAGE
     elif dbaccess.is_user_blocked(clients_logged_in[userto][1], clients_logged_in[userfrom][1]):
-        return 'This user blocked you'
+        return requeststatus.STATUS_SENDER_BLOCKED
     elif dbaccess.is_user_blocked(clients_logged_in[userfrom][1], clients_logged_in[userto][1]):
-        return 'You have blocked this user'
+        return requeststatus.STATUS_RECEIVER_BLOCKED
     else:
         clients_logged_in[userto][0].sendall('msg from ' + userfrom + ': ' + utils.concatlist(message))
-        return 'Message sent successfully'
+        return requeststatus.STATUS_SUCCESS
 
 
 def queryonline(username, clients_logged_in):
     if username in clients_logged_in.keys():
-        return 'Yes'
+        return requeststatus.QUERYRESPONSE_TRUE
     else:
-        return 'No'
+        return requeststatus.QUERYRESPONSE_FALSE
 
 
 def friendrequest(username_from, username_to, clients_logged_in):
     if username_from not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid_from = dbaccess.get_user_id(username_from)
         userid_to = dbaccess.get_user_id(username_to)
         if userid_from >= 0 and userid_to >= 0:
             if dbaccess.friend_request_sent(userid_from, userid_to):
-                return 'Friend request already sent'
+                return requeststatus.STATUS_FRIEND_REQUEST_ALREADY_SENT
             elif dbaccess.friend_request_sent(userid_to, userid_from):
-                return 'You already got a friend request from this user'
+                return requeststatus.STATUS_FRIEND_REQUEST_ALREADY_RECEIVED
             elif dbaccess.get_friendship_status(userid_from, userid_to):
-                return 'This user is already your friend'
+                return requeststatus.STATUS_ALREADY_FRIENDS
             elif dbaccess.create_friend_request(userid_from, userid_to):
-                return 'Friend request sent successfully'
+                return requeststatus.STATUS_SUCCESS
             else:
-                return 'Database error'
+                return requeststatus.STATUS_DATABASE_ERROR
         else:
-            return 'The user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def acceptfriendrequest(username_from, username_to, clients_logged_in):
     if username_to not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid_from = dbaccess.get_user_id(username_from)
         userid_to = dbaccess.get_user_id(username_to)
         if userid_from >= 0 and userid_to >= 0:
             if not dbaccess.friend_request_sent(userid_from, userid_to):
-                return 'There is no friend request from this user'
+                return requeststatus.STATUS_NO_FRIEND_REQUEST
             elif dbaccess.get_friendship_status(userid_from, userid_to):
-                return 'This user is already your friend'
+                return requeststatus.STATUS_ALREADY_FRIENDS
             elif dbaccess.accept_friend_request(userid_from, userid_to):
-                return 'Friend request accepted successfully'
+                return requeststatus.STATUS_SUCCESS
             else:
-                return 'Database error'
+                return requeststatus.STATUS_DATABASE_ERROR
         else:
-            return 'The user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def queryfriendship(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid1 = dbaccess.get_user_id(username1)
         userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if dbaccess.get_friendship_status(userid1, userid2):
-                return 'Yes'
+                return requeststatus.QUERYRESPONSE_TRUE
             else:
-                return 'No'
+                return requeststatus.QUERYRESPONSE_FALSE
         else:
-            return 'The user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def queryfriendrequestsent(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid1 = dbaccess.get_user_id(username1)
         userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if dbaccess.friend_request_sent(userid1, userid2):
-                return 'Yes'
+                return requeststatus.QUERYRESPONSE_TRUE
             else:
-                return 'No'
+                return requeststatus.QUERYRESPONSE_FALSE
         else:
-            return 'The user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def queryfriendrequestreceived(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid1 = dbaccess.get_user_id(username1)
         userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if dbaccess.friend_request_sent(userid2, userid1):
-                return 'Yes'
+                return requeststatus.QUERYRESPONSE_TRUE
             else:
-                return 'No'
+                return requeststatus.QUERYRESPONSE_FALSE
         else:
-            return 'The user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def unfriend(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid1 = dbaccess.get_user_id(username1)
         userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if dbaccess.get_friendship_status(userid1, userid2):
                 if dbaccess.delete_friendship(userid1, userid2):
-                    return 'You are no longer friends'
+                    return requeststatus.STATUS_SUCCESS
                 else:
-                    return 'Database error'
+                    return requeststatus.STATUS_DATABASE_ERROR
             else:
-                return 'You are not a friend of this user'
+                return requeststatus.STATUS_NO_FRIENDSHIP
         else:
-            return 'This user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def blockuser(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid1 = dbaccess.get_user_id(username1)
         userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if dbaccess.is_user_blocked(userid1, userid2):
-                return 'You already blocked this user'
+                return requeststatus.STATUS_ALREADY_BLOCKED
             elif dbaccess.add_block(userid1, userid2):
-                return 'User blocked successfully'
+                return requeststatus.STATUS_SUCCESS
             else:
-                return 'Database error'
+                return requeststatus.STATUS_DATABASE_ERROR
         else:
-            return 'This user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def unblockuser(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid1 = dbaccess.get_user_id(username1)
         userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if not dbaccess.is_user_blocked(userid1, userid2):
-                return 'You haven\'t blocked this user'
+                return requeststatus.STATUS_USER_NOT_BLOCKED
             elif dbaccess.remove_block(userid1, userid2):
-                return 'User unblocked successfully'
+                return requeststatus.STATUS_SUCCESS
             else:
-                return 'Database error'
+                return requeststatus.STATUS_DATABASE_ERROR
         else:
-            return 'This user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def queryblock(username_caller, username1, username2, clients_logged_in):
     if username_caller not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid1 = dbaccess.get_user_id(username1)
         userid2 = dbaccess.get_user_id(username2)
         if userid1 >= 0 and userid2 >= 0:
             if dbaccess.is_user_blocked(userid1, userid2):
-                return 'Yes'
+                return requeststatus.QUERYRESPONSE_TRUE
             else:
-                return 'No'
+                return requeststatus.QUERYRESPONSE_FALSE
         else:
-            return 'This user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def queryfriends(username, clients_logged_in):
     if username not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid = dbaccess.get_user_id(username)
         if userid >= 0:
             friendlist = dbaccess.get_friends(userid)
             if friendlist is None:
-                return 'Database error'
+                return requeststatus.STATUS_DATABASE_ERROR
             else:
-                return 'Query friends list successful\n' + str(friendlist)
+                return requeststatus.STATUS_SUCCESS, str(friendlist)
         else:
-            return 'This user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def changepassword(username, old_pass, new_pass, clients_logged_in):
     if username not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     elif dbaccess.user_login(username, old_pass) is None:
-        return 'Old password incorrect'
+        return requeststatus.STATUS_INVALID_PASSWORD
     elif dbaccess.change_password(dbaccess.get_user_id(username), new_pass):
-        return 'Password changed successfully'
+        return requeststatus.STATUS_SUCCESS
     else:
-        return 'Database error'
+        return requeststatus.STATUS_DATABASE_ERROR
 
 
 def querydescription(username_caller, username, clients_logged_in):
     if username_caller not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid = dbaccess.get_user_id(username)
         if userid >= 0:
             description = dbaccess.get_description(userid)
             if description is None:
-                return 'Database error'
-            return 'Query description successful\n' + str(description[0][0])
+                return requeststatus.STATUS_DATABASE_ERROR
+            return requeststatus.STATUS_SUCCESS, str(description[0][0])
         else:
-            return 'This user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def setdescription(username, description, clients_logged_in):
     if username not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid = dbaccess.get_user_id(username)
         if userid >= 0:
             if not dbaccess.set_description(userid, utils.concatlist(description)):
-                return 'Database error'
-            return 'Description set successfully'
+                return requeststatus.STATUS_DATABASE_ERROR
+            return requeststatus.STATUS_SUCCESS
         else:
-            return 'This user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def queryprofilepic(username_caller, username, clients_logged_in):
     if username_caller not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid = dbaccess.get_user_id(username)
         if userid >= 0:
-            description = dbaccess.get_profile_picture(userid)
-            if description is None:
-                return 'Database error'
-            return 'Query profile picture successful\n' + str(description[0][0])
+            profile_pic = dbaccess.get_profile_picture(userid)
+            if profile_pic is None:
+                return requeststatus.STATUS_DATABASE_ERROR
+            return requeststatus.STATUS_SUCCESS, str(profile_pic[0][0])
         else:
-            return 'This user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def setprofilepic(username, profile_pic, clients_logged_in):
     if username not in clients_logged_in.keys():
-        return 'Not logged in'
+        return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid = dbaccess.get_user_id(username)
         if userid >= 0:
             if not dbaccess.set_profile_picture(userid, profile_pic):
-                return 'Database error'
-            return 'Profile picture set successfully'
+                return requeststatus.STATUS_DATABASE_ERROR
+            return requeststatus.STATUS_SUCCESS
         else:
-            return 'This user does not exist'
+            return requeststatus.STATUS_NON_EXISTENT_USER
