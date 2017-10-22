@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Eliza_Desktop_App
 {
-    public partial class FormMain : Form
+    public partial class LoginControl : UserControl
     {
-        public FormMain()
+        public LoginControl()
         {
             InitializeComponent();
         }
