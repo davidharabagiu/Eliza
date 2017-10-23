@@ -25,7 +25,7 @@ namespace Eliza_Desktop_App
                 "login {0} {1}",
                 textUsername.Text,
                 textPassword.Text));
-            MessageBox.Show(ClientProcess.ReceiveResponse().ToString());
+            MessageBox.Show(ClientProcess.ReceiveResponse());
         }
     }
 }

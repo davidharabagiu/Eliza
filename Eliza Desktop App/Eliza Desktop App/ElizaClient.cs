@@ -1,37 +1,37 @@
 ﻿using System.Diagnostics;
+using System.IO.Pipes;
 
 namespace Eliza_Desktop_App
 {
     public class ElizaClient : Process
     {
+        private NamedPipeServerStream pipeServerStream;
+        private StringStream ioStream;
+
         public ElizaClient() : base()
         {
-            StartInfo.FileName = "python";
+            pipeServerStream = new NamedPipeServerStream("elizapipe", PipeDirection.In);
+            StartInfo.FileName = "pythonw";
             StartInfo.Arguments = @"d:\Projects\Eliza\elizaclient.py";
             StartInfo.UseShellExecute = false;
-            StartInfo.RedirectStandardInput = true;
-            StartInfo.RedirectStandardOutput = true;
             Start();
+            pipeServerStream.WaitForConnection();
         }
 
         public void SendRequest(string msg)
         {
-            StandardInput.Write(msg + "\n");
+            ioStream.Write(msg);
         }
 
-        public int ReceiveResponse()
+        public string ReceiveResponse()
         {
-            return StandardOutput.Read();
-            /*char[] buffer = new char[1024];
-            int len = StandardOutput.ReadBlock(buffer, 0, 1024);
-            return new string(buffer, 0, len);*/
+            return ioStream.Read();
         }
 
         public new void Close()
         {
             SendRequest("exit");
             StandardInput.Close();
-            //WaitForExit();
             Kill();
             base.Close();
         }

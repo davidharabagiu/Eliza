@@ -36,7 +36,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Eliza_Desktop_App.Properties.Resources.eliza_logo;
-            this.pictureBox1.Location = new System.Drawing.Point(63, 36);
+            this.pictureBox1.Location = new System.Drawing.Point(71, 36);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(281, 137);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -46,7 +46,7 @@
             // loginControl
             // 
             this.loginControl.ClientProcess = null;
-            this.loginControl.Location = new System.Drawing.Point(90, 235);
+            this.loginControl.Location = new System.Drawing.Point(98, 235);
             this.loginControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.loginControl.Name = "loginControl";
             this.loginControl.Size = new System.Drawing.Size(244, 111);
@@ -59,6 +59,7 @@
             this.ClientSize = new System.Drawing.Size(426, 600);
             this.Controls.Add(this.loginControl);
             this.Controls.Add(this.pictureBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "FormMain";
             this.Text = "Eliza";
