@@ -8,9 +8,25 @@ namespace Eliza_Desktop_App
 {
     static class Program
     {
-        [STAThread]
-        static void Main()
+        private static bool debugMode;
+
+        public static bool DebugMode
         {
+            get
+            {
+                return debugMode;
+            }
+        }
+
+        [STAThread]
+        static void Main(string[] args)
+        {
+            debugMode = false;
+            if (args.Length > 0 && args[0] == "-debug")
+            {
+                debugMode = true;
+            }
+
             ElizaClient elizaClient = new ElizaClient();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

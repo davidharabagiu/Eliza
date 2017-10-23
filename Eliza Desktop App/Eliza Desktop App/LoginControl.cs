@@ -21,11 +21,32 @@ namespace Eliza_Desktop_App
 
         private void buttonLogin_Click(object sender, EventArgs e)
         {
-            ClientProcess.SendRequest(String.Format(
+            ClientProcess.SendRequest(string.Format(
                 "login {0} {1}",
                 textUsername.Text,
                 textPassword.Text));
-            MessageBox.Show(ClientProcess.ReceiveResponse());
+
+            ElizaStatus status = (ElizaStatus)int.Parse(ClientProcess.ReceiveResponse());
+            MessageBoxIcon mboxIcon = MessageBoxIcon.Error;
+            string statusMessage;
+            switch (status)
+            {
+                case ElizaStatus.STATUS_SUCCESS:
+                    statusMessage = string.Format("Logged in succesfully as {0}.", textUsername.Text);
+                    mboxIcon = MessageBoxIcon.Information;
+                    break;
+                case ElizaStatus.STATUS_INVALID_CREDENTIALS:
+                case ElizaStatus.STATUS_INVALID_REQUEST_PARAMETERS:
+                    statusMessage = "Invalid username or password.";
+                    break;
+                case ElizaStatus.STATUS_ALREADY_LOGGED_IN:
+                    statusMessage = string.Format("{0} is already logged in.", textUsername.Text);
+                    break;
+                default:
+                    statusMessage = string.Format("An unknown error occured: {0}.", (int)status);
+                    break;
+            }
+            MessageBox.Show(statusMessage, "Eliza", MessageBoxButtons.OK, mboxIcon);
         }
     }
 }

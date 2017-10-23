@@ -1,6 +1,7 @@
 import socket
 import threading
 import requeststatus
+import guiconnection
 
 
 host, port1, port2 = 'elizaserver.ddns.net', 9999, 9998
@@ -33,6 +34,7 @@ if __name__ == '__main__':
     expectedFileSize = 0
     fileData = ''
     fileTransferBytesReceived = 0
+    gui_pipe = guiconnection.GuiPipe()
 
     try:
         sock1.connect((host, port1))
@@ -45,17 +47,15 @@ if __name__ == '__main__':
                 fileTransferBytesReceived += len(response)
                 fileData += response
                 if fileTransferBytesReceived >= expectedFileSize:
-                    print fileData
+                    gui_pipe.send(fileData)
                     fileTransferMode = False
             else:
-                request = raw_input()
+                request = gui_pipe.recv()
                 if request == 'exit':
                     break
                 sock1.sendall(request)
-                response = sock1.recv(1024).splitlines()
-                print requeststatus.status_messages[int(response[0])]
-                for i in range(1, len(response)):
-                    print response[i]
+                response = sock1.recv(1024)
+                gui_pipe.send(response)
                 if request.startswith('queryprofilepic '):
                     fileTransferMode = True
                     expectedFileSize = int(response[1])
