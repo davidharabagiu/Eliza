@@ -47,7 +47,7 @@ namespace Eliza_Desktop_App
         {
             pipeServerStream = new NamedPipeServerStream("elizapipe", PipeDirection.InOut);
             StartInfo.FileName = Program.DebugMode ? "python" : "pythonw";
-            StartInfo.Arguments = @"d:\Projects\Eliza\elizaclient.py";
+            StartInfo.Arguments = @"..\..\..\..\elizaclient.py";
             StartInfo.UseShellExecute = Program.DebugMode;
             Start();
             pipeServerStream.WaitForConnection();
