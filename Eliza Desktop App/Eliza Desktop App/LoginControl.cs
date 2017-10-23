@@ -13,6 +13,8 @@ namespace Eliza_Desktop_App
     public partial class LoginControl : UserControl
     {
         public ElizaClient ClientProcess { get; set; }
+        public delegate void LogInPressedEventHandler(ElizaStatus status, string userName);
+        public event LogInPressedEventHandler LogInPressed;
 
         public LoginControl()
         {
@@ -26,27 +28,8 @@ namespace Eliza_Desktop_App
                 textUsername.Text,
                 textPassword.Text));
 
-            ElizaStatus status = (ElizaStatus)int.Parse(ClientProcess.ReceiveResponse());
-            MessageBoxIcon mboxIcon = MessageBoxIcon.Error;
-            string statusMessage;
-            switch (status)
-            {
-                case ElizaStatus.STATUS_SUCCESS:
-                    statusMessage = string.Format("Logged in succesfully as {0}.", textUsername.Text);
-                    mboxIcon = MessageBoxIcon.Information;
-                    break;
-                case ElizaStatus.STATUS_INVALID_CREDENTIALS:
-                case ElizaStatus.STATUS_INVALID_REQUEST_PARAMETERS:
-                    statusMessage = "Invalid username or password.";
-                    break;
-                case ElizaStatus.STATUS_ALREADY_LOGGED_IN:
-                    statusMessage = string.Format("{0} is already logged in.", textUsername.Text);
-                    break;
-                default:
-                    statusMessage = string.Format("An unknown error occured: {0}.", (int)status);
-                    break;
-            }
-            MessageBox.Show(statusMessage, "Eliza", MessageBoxButtons.OK, mboxIcon);
+            ElizaStatus status = ClientProcess.ReceiveResponse().Status;
+            LogInPressed(status, textUsername.Text);
         }
     }
 }

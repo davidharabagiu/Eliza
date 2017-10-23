@@ -37,6 +37,34 @@ namespace Eliza_Desktop_App
         QUERYRESPONSE_TRUE = 101
     }
 
+    public struct ClientResponse
+    {
+        public ElizaStatus Status { get; private set; }
+        public string Message { get; private set; }
+
+        public ClientResponse(string responseMessage)
+        {
+            int messageIndex = responseMessage.IndexOf('\n');
+            if (messageIndex == -1)
+            {
+                Status = (ElizaStatus)int.Parse(responseMessage);
+                Message = string.Empty;
+            }
+            else
+            {
+                Status = (ElizaStatus)int.Parse(responseMessage.Substring(0, messageIndex));
+                if (responseMessage.Length > messageIndex + 1)
+                {
+                    Message = responseMessage.Substring(messageIndex + 1);
+                }
+                else
+                {
+                    Message = string.Empty;
+                }
+            }
+        }
+    }
+
     public class ElizaClient : Process
     {
         private NamedPipeServerStream pipeServerStream;
@@ -62,10 +90,10 @@ namespace Eliza_Desktop_App
             writer.Write(buffer);
         }
 
-        public string ReceiveResponse()
+        public ClientResponse ReceiveResponse()
         {
             int len = (int)reader.ReadUInt32();
-            return new string(reader.ReadChars(len));
+            return new ClientResponse(new string(reader.ReadChars(len)));
         }
 
         public new void Close()

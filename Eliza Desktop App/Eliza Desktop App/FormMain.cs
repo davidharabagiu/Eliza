@@ -18,13 +18,43 @@ namespace Eliza_Desktop_App
         {
             InitializeComponent();
             this.elizaClient = elizaClient;
+            mainChatControl.ClientProcess = elizaClient;
             loginControl.ClientProcess = elizaClient;
+            loginControl.LogInPressed += LoginControl_LogInPressed;
             FormClosing += FormMain_FormClosing;
+        }
+
+        private void LoginControl_LogInPressed(ElizaStatus status, string userName)
+        {
+            switch (status)
+            {
+                case ElizaStatus.STATUS_SUCCESS:
+                    loginControl.Hide();
+                    pictureBoxLogo.Hide();
+                    mainChatControl.SetUser(userName);
+                    mainChatControl.Show();
+                    break;
+                case ElizaStatus.STATUS_INVALID_CREDENTIALS:
+                case ElizaStatus.STATUS_INVALID_REQUEST_PARAMETERS:
+                    Program.ErrorMessage("Invalid username or password.");
+                    break;
+                case ElizaStatus.STATUS_ALREADY_LOGGED_IN:
+                    Program.ErrorMessage(string.Format("{0} is already logged in.", userName));
+                    break;
+                default:
+                    Program.ErrorMessage(string.Format("An unknown error occured: {0}.", (int)status));
+                    break;
+            }
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             elizaClient.Close();
+        }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            
         }
     }
 }

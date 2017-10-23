@@ -61,6 +61,12 @@
     <Compile Include="LoginControl.Designer.cs">
       <DependentUpon>LoginControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainChatControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainChatControl.Designer.cs">
+      <DependentUpon>MainChatControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringStream.cs" />
@@ -69,6 +75,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LoginControl.resx">
       <DependentUpon>LoginControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainChatControl.resx">
+      <DependentUpon>MainChatControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -95,6 +104,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\eliza-logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\default-profile-pic.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

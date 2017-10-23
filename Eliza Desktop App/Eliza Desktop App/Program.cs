@@ -32,5 +32,10 @@ namespace Eliza_Desktop_App
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FormMain(elizaClient));
         }
+
+        public static void ErrorMessage(string msg)
+        {
+            MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 }
