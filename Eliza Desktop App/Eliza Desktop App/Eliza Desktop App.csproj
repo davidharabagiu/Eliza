@@ -49,6 +49,7 @@
     <Compile Include="ElizaClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ElizaClientException.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>

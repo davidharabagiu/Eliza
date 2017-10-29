@@ -2,6 +2,8 @@
 using System.IO;
 using System.IO.Pipes;
 using System.Text;
+using System.Collections.Generic;
+using System;
 
 namespace Eliza_Desktop_App
 {
@@ -94,6 +96,27 @@ namespace Eliza_Desktop_App
         {
             int len = (int)reader.ReadUInt32();
             return new ClientResponse(new string(reader.ReadChars(len)));
+        }
+
+        public byte[] ReceiveFile(int fileLength)
+        {
+            int bytesReceived = 0;
+            int len = 0;
+
+            List<char> base64FileData = new List<char>();
+            while (bytesReceived < fileLength)
+            {
+                len = (int)reader.ReadUInt32();
+                char[] buffer = reader.ReadChars(len);
+                base64FileData.AddRange(buffer);
+                bytesReceived += len;
+            }
+            string sBase64FileData = new string(base64FileData.ToArray());
+            if (sBase64FileData == "None")
+            {
+                return null;
+            }
+            return Convert.FromBase64String(sBase64FileData);
         }
 
         public new void Close()

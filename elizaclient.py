@@ -46,8 +46,8 @@ if __name__ == '__main__':
                 response = sock1.recv(1024)
                 fileTransferBytesReceived += len(response)
                 fileData += response
+                gui_pipe.send(response)
                 if fileTransferBytesReceived >= expectedFileSize:
-                    gui_pipe.send(fileData)
                     fileTransferMode = False
             else:
                 request = gui_pipe.recv()
@@ -58,7 +58,7 @@ if __name__ == '__main__':
                 gui_pipe.send(response)
                 if request.startswith('queryprofilepic '):
                     fileTransferMode = True
-                    expectedFileSize = int(response[1])
+                    expectedFileSize = int((response.splitlines())[1])
                     fileData = ''
                     fileTransferBytesReceived = 0
     except socket.error as err:
