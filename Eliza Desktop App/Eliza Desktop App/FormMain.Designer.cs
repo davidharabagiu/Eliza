@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
             this.loginControl = new Eliza_Desktop_App.LoginControl();
             this.mainChatControl = new Eliza_Desktop_App.MainChatControl();
@@ -56,6 +57,7 @@
             // 
             // mainChatControl
             // 
+            this.mainChatControl.ClientProcess = null;
             this.mainChatControl.Location = new System.Drawing.Point(0, 0);
             this.mainChatControl.Name = "mainChatControl";
             this.mainChatControl.Size = new System.Drawing.Size(507, 692);
@@ -72,6 +74,7 @@
             this.Controls.Add(this.loginControl);
             this.Controls.Add(this.mainChatControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "FormMain";
