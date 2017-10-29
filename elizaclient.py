@@ -44,6 +44,7 @@ if __name__ == '__main__':
         while True:
             if fileTransferMode:
                 response = sock1.recv(1024)
+                print 'File data received: ' + response
                 fileTransferBytesReceived += len(response)
                 fileData += response
                 gui_pipe.send(response)
@@ -54,7 +55,9 @@ if __name__ == '__main__':
                 if request == 'exit':
                     break
                 sock1.sendall(request)
+                print 'Request sent: ' + request
                 response = sock1.recv(1024)
+                print 'Response received: ' + response
                 gui_pipe.send(response)
                 if request.startswith('queryprofilepic '):
                     fileTransferMode = True
