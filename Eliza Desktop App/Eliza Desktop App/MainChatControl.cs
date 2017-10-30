@@ -15,10 +15,14 @@ namespace Eliza_Desktop_App
     {
         public ElizaClient ClientProcess { get; set; }
         private string userName;
+        private bool emptyDescription;
+        public delegate void LogOutPressedEventHandler(ElizaStatus status);
+        public event LogOutPressedEventHandler LogOutPressed;
 
         public MainChatControl()
         {
             InitializeComponent();
+            emptyDescription = true;
         }
 
         public void SetUser(string userName)
@@ -28,7 +32,8 @@ namespace Eliza_Desktop_App
             string description = GetDescription(userName);
             if (description != null)
             {
-                labelDescription.Text = description;
+                labelDescription.Text = description.Substring(0, description.Length - 1);
+                emptyDescription = false;
             }
             Image profilePicture = GetProfilePicture(userName);
             if (profilePicture != null)
@@ -45,7 +50,7 @@ namespace Eliza_Desktop_App
                 ClientResponse response = ClientProcess.ReceiveResponse();
                 if (response.Status == ElizaStatus.STATUS_SUCCESS)
                 {
-                    if (response.Message == "None")
+                    if (response.Message == "None\n")
                     {
                         return null;
                     }
@@ -91,6 +96,111 @@ namespace Eliza_Desktop_App
             {
                 Program.ErrorMessage(ex.Message);
                 return null;
+            }
+        }
+
+        private void signOutMenuButton_Click(object sender, EventArgs e)
+        {
+            ClientProcess.SendRequest("logout");
+            ElizaStatus status = ClientProcess.ReceiveResponse().Status;
+            LogOutPressed(status);
+            pictureProfile.Image = Eliza_Desktop_App.Properties.Resources.default_profile_pic;
+            labelDescription.Text = "Click to add description...";
+            emptyDescription = true;
+        }
+
+        private void labelDescription_Click(object sender, EventArgs e)
+        {
+            if (emptyDescription)
+            {
+                textDescription.Text = "";
+            }
+            else
+            {
+                textDescription.Text = labelDescription.Text;
+            }
+            labelDescription.Visible = false;
+            textDescription.Visible = true;
+            buttonSaveDescription.Visible = true;
+            buttonDiscardDescription.Visible = true;
+        }
+
+        private void buttonSaveDescription_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (textDescription.Text.Length > 1000)
+                {
+                    Program.ErrorMessage("Description too long.");
+                    return;
+                }
+                ClientProcess.SendRequest(string.Format("setdescription {0}", textDescription.Text));
+                ElizaStatus status = ClientProcess.ReceiveResponse().Status;
+                if (status != ElizaStatus.STATUS_SUCCESS)
+                {
+                    throw new ElizaClientException(status);
+                }
+                labelDescription.Text = textDescription.Text;
+                
+            }
+            catch (ElizaClientException ex)
+            {
+                Program.ErrorMessage(ex.Message);
+            }
+            finally
+            {
+                labelDescription.Visible = true;
+                textDescription.Visible = false;
+                buttonSaveDescription.Visible = false;
+                buttonDiscardDescription.Visible = false;
+                textDescription.Text = "";
+            }
+        }
+
+        private void buttonDiscardDescription_Click(object sender, EventArgs e)
+        {
+
+            labelDescription.Visible = true;
+            textDescription.Visible = false;
+            buttonSaveDescription.Visible = false;
+            buttonDiscardDescription.Visible = false;
+            textDescription.Text = "";
+        }
+
+        private void pictureProfile_DoubleClick(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.Title = "Change Profile Picture";
+                dialog.FileName = "";
+                dialog.Filter = "JPEG files(*.jpg;*.jpeg)|*.jpg;*.jpeg";
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    Image newProfilePic = new Bitmap(Image.FromFile(dialog.FileName), new Size(100, 100));
+                    byte[] fileData;
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        newProfilePic.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                        fileData = ms.ToArray();
+                    }
+                    ClientResponse response = ClientProcess.SendFile(fileData);
+                    if (response.Status != ElizaStatus.STATUS_SUCCESS)
+                    {
+                        throw new ElizaClientException(response.Status);
+                    }
+                    ClientProcess.SendRequest("setprofilepic");
+                    response = ClientProcess.ReceiveResponse();
+                    if (response.Status != ElizaStatus.STATUS_SUCCESS)
+                    {
+                        throw new ElizaClientException(response.Status);
+                    }
+                    pictureProfile.Image = newProfilePic;
+                }
+            }
+            catch (ElizaClientException ex)
+            {
+                Program.ErrorMessage(ex.Message);
             }
         }
     }

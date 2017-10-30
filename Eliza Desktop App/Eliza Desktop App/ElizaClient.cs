@@ -119,6 +119,35 @@ namespace Eliza_Desktop_App
             return Convert.FromBase64String(sBase64FileData);
         }
 
+        public ClientResponse SendFile(byte[] fileData)
+        {
+            char[] base64FileData = Convert.ToBase64String(fileData).ToCharArray();
+            SendRequest(string.Format("filetransfer {0}", base64FileData.Length));
+
+            ClientResponse response = ReceiveResponse();
+            if (response.Status != ElizaStatus.STATUS_SUCCESS)
+            {
+                return response;
+            }
+
+            int fileBytesSent = 0;
+            while (fileBytesSent < base64FileData.Length)
+            {
+                int fileBytesToSend = Math.Min(1024, base64FileData.Length - fileBytesSent);
+                writer.Write(fileBytesToSend);
+                writer.Write(base64FileData, fileBytesSent, fileBytesToSend);
+                fileBytesSent += 1024;
+
+                response = ReceiveResponse();
+                if (response.Status != ElizaStatus.STATUS_SUCCESS)
+                {
+                    return response;
+                }
+            }
+
+            return response;
+        }
+
         public new void Close()
         {
             SendRequest("exit");

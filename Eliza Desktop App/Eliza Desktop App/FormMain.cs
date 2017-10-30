@@ -19,9 +19,31 @@ namespace Eliza_Desktop_App
             InitializeComponent();
             this.elizaClient = elizaClient;
             mainChatControl.ClientProcess = elizaClient;
+            mainChatControl.LogOutPressed += MainChatControl_LogOutPressed;
             loginControl.ClientProcess = elizaClient;
             loginControl.LogInPressed += LoginControl_LogInPressed;
             FormClosing += FormMain_FormClosing;
+        }
+
+        private void MainChatControl_LogOutPressed(ElizaStatus status)
+        {
+            try
+            {
+                if (status != ElizaStatus.STATUS_SUCCESS)
+                {
+                    throw new ElizaClientException(status);
+                }
+            }
+            catch (ElizaClientException ex)
+            {
+                Program.ErrorMessage(ex.Message);
+            }
+            finally
+            {
+                mainChatControl.Hide();
+                loginControl.Show();
+                pictureBoxLogo.Show();
+            }
         }
 
         private void LoginControl_LogInPressed(ElizaStatus status, string userName)

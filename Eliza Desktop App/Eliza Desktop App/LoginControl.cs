@@ -30,6 +30,8 @@ namespace Eliza_Desktop_App
 
             ElizaStatus status = ClientProcess.ReceiveResponse().Status;
             LogInPressed(status, textUsername.Text);
+            textUsername.Text = "";
+            textPassword.Text = "";
         }
     }
 }
