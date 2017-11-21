@@ -79,7 +79,6 @@
     <Compile Include="SendFriendRequestDialog.Designer.cs">
       <DependentUpon>SendFriendRequestDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="StringStream.cs" />
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
