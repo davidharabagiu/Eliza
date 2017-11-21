@@ -120,6 +120,7 @@
             this.buttonAddProfilePic.TabIndex = 7;
             this.buttonAddProfilePic.Text = "Add Profile Picture (optional)";
             this.buttonAddProfilePic.UseVisualStyleBackColor = true;
+            this.buttonAddProfilePic.Click += new System.EventHandler(this.buttonAddProfilePic_Click);
             // 
             // pictureProfile
             // 
