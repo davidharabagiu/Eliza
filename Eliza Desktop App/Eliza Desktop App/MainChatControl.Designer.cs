@@ -38,6 +38,9 @@
             this.textDescription = new System.Windows.Forms.TextBox();
             this.buttonSaveDescription = new System.Windows.Forms.Button();
             this.buttonDiscardDescription = new System.Windows.Forms.Button();
+            this.listViewFriends = new System.Windows.Forms.ListView();
+            this.columnHeaderUsername = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderOnline = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.pictureProfile)).BeginInit();
             this.mainMenu.SuspendLayout();
             this.SuspendLayout();
@@ -99,14 +102,14 @@
             // signOutMenuButton
             // 
             this.signOutMenuButton.Name = "signOutMenuButton";
-            this.signOutMenuButton.Size = new System.Drawing.Size(181, 26);
+            this.signOutMenuButton.Size = new System.Drawing.Size(141, 26);
             this.signOutMenuButton.Text = "Sign Out";
             this.signOutMenuButton.Click += new System.EventHandler(this.signOutMenuButton_Click);
             // 
             // exitMenuButton
             // 
             this.exitMenuButton.Name = "exitMenuButton";
-            this.exitMenuButton.Size = new System.Drawing.Size(181, 26);
+            this.exitMenuButton.Size = new System.Drawing.Size(141, 26);
             this.exitMenuButton.Text = "Exit";
             // 
             // textDescription
@@ -140,6 +143,27 @@
             this.buttonDiscardDescription.Visible = false;
             this.buttonDiscardDescription.Click += new System.EventHandler(this.buttonDiscardDescription_Click);
             // 
+            // listViewFriends
+            // 
+            this.listViewFriends.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderUsername,
+            this.columnHeaderOnline});
+            this.listViewFriends.Location = new System.Drawing.Point(16, 147);
+            this.listViewFriends.Name = "listViewFriends";
+            this.listViewFriends.Size = new System.Drawing.Size(475, 521);
+            this.listViewFriends.TabIndex = 7;
+            this.listViewFriends.UseCompatibleStateImageBehavior = false;
+            this.listViewFriends.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeaderUsername
+            // 
+            this.columnHeaderUsername.Text = "User Name";
+            this.columnHeaderUsername.Width = 150;
+            // 
+            // columnHeaderOnline
+            // 
+            this.columnHeaderOnline.Text = "Online";
+            // 
             // MainChatControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -151,8 +175,9 @@
             this.Controls.Add(this.mainMenu);
             this.Controls.Add(this.textDescription);
             this.Controls.Add(this.labelDescription);
+            this.Controls.Add(this.listViewFriends);
             this.Name = "MainChatControl";
-            this.Size = new System.Drawing.Size(507, 692);
+            this.Size = new System.Drawing.Size(507, 683);
             ((System.ComponentModel.ISupportInitialize)(this.pictureProfile)).EndInit();
             this.mainMenu.ResumeLayout(false);
             this.mainMenu.PerformLayout();
@@ -173,5 +198,8 @@
         private System.Windows.Forms.TextBox textDescription;
         private System.Windows.Forms.Button buttonSaveDescription;
         private System.Windows.Forms.Button buttonDiscardDescription;
+        private System.Windows.Forms.ListView listViewFriends;
+        private System.Windows.Forms.ColumnHeader columnHeaderUsername;
+        private System.Windows.Forms.ColumnHeader columnHeaderOnline;
     }
 }

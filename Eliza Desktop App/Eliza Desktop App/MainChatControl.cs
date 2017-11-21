@@ -40,6 +40,41 @@ namespace Eliza_Desktop_App
             {
                 pictureProfile.Image = profilePicture;
             }
+            Dictionary<string, bool> friendsList = GetFriendList();
+            foreach (string k in friendsList.Keys)
+            {
+                ListViewItem friendItem = new ListViewItem(new string[] { k, friendsList[k] ? "Yes" : "No" });
+                listViewFriends.Items.Add(friendItem);
+            }
+        }
+
+        private Dictionary<string, bool> GetFriendList()
+        {
+            try
+            {
+                ClientProcess.SendRequest("queryfriends");
+                ClientResponse response = ClientProcess.ReceiveResponse();
+                if (response.Status != ElizaStatus.STATUS_SUCCESS)
+                {
+                    throw new ElizaClientException(response.Status);
+                }
+                string[] friends = response.Message.Split(new char[] { '\n' });
+                Dictionary<string, bool> friendList = new Dictionary<string, bool>();
+                foreach (string s in friends)
+                {
+                    int spaceIndex = s.IndexOf(' ');
+                    if (spaceIndex > 0)
+                    {
+                        friendList.Add(s.Substring(0, spaceIndex), s.Substring(spaceIndex + 1).StartsWith("1"));
+                    }
+                }
+                return friendList;
+            }
+            catch(ElizaClientException ex)
+            {
+                Program.ErrorMessage(ex.Message);
+                return null;
+            }
         }
 
         private string GetDescription(string userName)
@@ -107,6 +142,7 @@ namespace Eliza_Desktop_App
             pictureProfile.Image = Eliza_Desktop_App.Properties.Resources.default_profile_pic;
             labelDescription.Text = "Click to add description...";
             emptyDescription = true;
+            listViewFriends.Items.Clear();
         }
 
         private void labelDescription_Click(object sender, EventArgs e)

@@ -231,7 +231,10 @@ def queryfriends(username, clients_logged_in):
             if friendlist is None:
                 return requeststatus.STATUS_DATABASE_ERROR
             else:
-                return requeststatus.STATUS_SUCCESS, str(friendlist)
+                friend_list_pretty = ""
+                for friend in friendlist:
+                    friend_list_pretty += friend[0] + " " + str(friend[1]) + "\n"
+                return requeststatus.STATUS_SUCCESS, friend_list_pretty
         else:
             return requeststatus.STATUS_NON_EXISTENT_USER
 
