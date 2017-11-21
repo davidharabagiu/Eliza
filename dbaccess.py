@@ -131,6 +131,13 @@ def get_friends(userid):
     return querydb(sql, (userid, userid))
 
 
+def get_friend_requests(userid):
+    sql = ("SELECT a.user_name FROM accounts a "
+           "JOIN friendrequests f ON (a.account_id = f.user_from) "
+           "WHERE f.user_to = %s")
+    return querydb(sql, (userid, ))
+
+
 def change_password(userid, new_pass):
     sql = "UPDATE accounts SET password = %s WHERE account_id = %s"
     cipher = XOR.new('random')

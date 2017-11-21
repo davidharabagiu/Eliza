@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pictureProfile = new System.Windows.Forms.PictureBox();
+            this.components = new System.ComponentModel.Container();
             this.labelUserName = new System.Windows.Forms.Label();
             this.labelDescription = new System.Windows.Forms.Label();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
@@ -41,22 +41,13 @@
             this.listViewFriends = new System.Windows.Forms.ListView();
             this.columnHeaderUsername = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderOnline = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            ((System.ComponentModel.ISupportInitialize)(this.pictureProfile)).BeginInit();
+            this.addFriendMenuButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.friendRequestsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.timerRefresh = new System.Windows.Forms.Timer(this.components);
+            this.pictureProfile = new System.Windows.Forms.PictureBox();
             this.mainMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureProfile)).BeginInit();
             this.SuspendLayout();
-            // 
-            // pictureProfile
-            // 
-            this.pictureProfile.BackColor = System.Drawing.Color.White;
-            this.pictureProfile.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureProfile.Image = global::Eliza_Desktop_App.Properties.Resources.default_profile_pic;
-            this.pictureProfile.Location = new System.Drawing.Point(16, 38);
-            this.pictureProfile.Name = "pictureProfile";
-            this.pictureProfile.Size = new System.Drawing.Size(100, 100);
-            this.pictureProfile.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureProfile.TabIndex = 0;
-            this.pictureProfile.TabStop = false;
-            this.pictureProfile.DoubleClick += new System.EventHandler(this.pictureProfile_DoubleClick);
             // 
             // labelUserName
             // 
@@ -83,7 +74,8 @@
             this.mainMenu.BackColor = System.Drawing.Color.Transparent;
             this.mainMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.optionsMenu});
+            this.optionsMenu,
+            this.friendRequestsMenu});
             this.mainMenu.Location = new System.Drawing.Point(0, 0);
             this.mainMenu.Name = "mainMenu";
             this.mainMenu.Size = new System.Drawing.Size(507, 28);
@@ -93,6 +85,7 @@
             // optionsMenu
             // 
             this.optionsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addFriendMenuButton,
             this.signOutMenuButton,
             this.exitMenuButton});
             this.optionsMenu.Name = "optionsMenu";
@@ -102,14 +95,14 @@
             // signOutMenuButton
             // 
             this.signOutMenuButton.Name = "signOutMenuButton";
-            this.signOutMenuButton.Size = new System.Drawing.Size(141, 26);
+            this.signOutMenuButton.Size = new System.Drawing.Size(157, 26);
             this.signOutMenuButton.Text = "Sign Out";
             this.signOutMenuButton.Click += new System.EventHandler(this.signOutMenuButton_Click);
             // 
             // exitMenuButton
             // 
             this.exitMenuButton.Name = "exitMenuButton";
-            this.exitMenuButton.Size = new System.Drawing.Size(141, 26);
+            this.exitMenuButton.Size = new System.Drawing.Size(157, 26);
             this.exitMenuButton.Text = "Exit";
             // 
             // textDescription
@@ -164,6 +157,39 @@
             // 
             this.columnHeaderOnline.Text = "Online";
             // 
+            // addFriendMenuButton
+            // 
+            this.addFriendMenuButton.Name = "addFriendMenuButton";
+            this.addFriendMenuButton.Size = new System.Drawing.Size(157, 26);
+            this.addFriendMenuButton.Text = "Add Friend";
+            this.addFriendMenuButton.Click += new System.EventHandler(this.addFriendMenuButton_Click);
+            // 
+            // friendRequestsMenu
+            // 
+            this.friendRequestsMenu.Name = "friendRequestsMenu";
+            this.friendRequestsMenu.Size = new System.Drawing.Size(125, 24);
+            this.friendRequestsMenu.Text = "Friend Requests";
+            this.friendRequestsMenu.Visible = false;
+            // 
+            // timerRefresh
+            // 
+            this.timerRefresh.Enabled = true;
+            this.timerRefresh.Interval = 10000;
+            this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
+            // 
+            // pictureProfile
+            // 
+            this.pictureProfile.BackColor = System.Drawing.Color.White;
+            this.pictureProfile.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureProfile.Image = global::Eliza_Desktop_App.Properties.Resources.default_profile_pic;
+            this.pictureProfile.Location = new System.Drawing.Point(16, 38);
+            this.pictureProfile.Name = "pictureProfile";
+            this.pictureProfile.Size = new System.Drawing.Size(100, 100);
+            this.pictureProfile.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureProfile.TabIndex = 0;
+            this.pictureProfile.TabStop = false;
+            this.pictureProfile.DoubleClick += new System.EventHandler(this.pictureProfile_DoubleClick);
+            // 
             // MainChatControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -178,9 +204,9 @@
             this.Controls.Add(this.listViewFriends);
             this.Name = "MainChatControl";
             this.Size = new System.Drawing.Size(507, 683);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureProfile)).EndInit();
             this.mainMenu.ResumeLayout(false);
             this.mainMenu.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureProfile)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -201,5 +227,8 @@
         private System.Windows.Forms.ListView listViewFriends;
         private System.Windows.Forms.ColumnHeader columnHeaderUsername;
         private System.Windows.Forms.ColumnHeader columnHeaderOnline;
+        private System.Windows.Forms.ToolStripMenuItem addFriendMenuButton;
+        private System.Windows.Forms.ToolStripMenuItem friendRequestsMenu;
+        private System.Windows.Forms.Timer timerRefresh;
     }
 }

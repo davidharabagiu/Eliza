@@ -239,6 +239,24 @@ def queryfriends(username, clients_logged_in):
             return requeststatus.STATUS_NON_EXISTENT_USER
 
 
+def queryfriendrequests(username, clients_logged_in):
+    if username not in clients_logged_in.keys():
+        return requeststatus.STATUS_NOT_LOGGED_IN
+    else:
+        userid = dbaccess.get_user_id(username)
+        if userid >= 0:
+            friendrequests = dbaccess.get_friend_requests(userid)
+            if friendrequests is None:
+                return requeststatus.STATUS_SUCCESS, ""
+            else:
+                friend_requests_pretty = ""
+                for friend_request in friendrequests:
+                    friend_requests_pretty += friend_request[0] + "\n"
+                return requeststatus.STATUS_SUCCESS, friend_requests_pretty
+        else:
+            return requeststatus.STATUS_NON_EXISTENT_USER
+
+
 def changepassword(username, old_pass, new_pass, clients_logged_in):
     if username not in clients_logged_in.keys():
         return requeststatus.STATUS_NOT_LOGGED_IN

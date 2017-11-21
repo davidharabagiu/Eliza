@@ -29,22 +29,75 @@ namespace Eliza_Desktop_App
         {
             this.userName = userName;
             labelUserName.Text = userName;
+
             string description = GetDescription(userName);
             if (description != null)
             {
                 labelDescription.Text = description.Substring(0, description.Length - 1);
                 emptyDescription = false;
             }
+
             Image profilePicture = GetProfilePicture(userName);
             if (profilePicture != null)
             {
                 pictureProfile.Image = profilePicture;
             }
+
+            UpdateFriendList();
+            UpdateFriendRequestsMenu();
+
+            timerRefresh.Start();
+        }
+
+        private void UpdateFriendList()
+        {
+            listViewFriends.Items.Clear();
             Dictionary<string, bool> friendsList = GetFriendList();
             foreach (string k in friendsList.Keys)
             {
                 ListViewItem friendItem = new ListViewItem(new string[] { k, friendsList[k] ? "Yes" : "No" });
                 listViewFriends.Items.Add(friendItem);
+            }
+        }
+
+        private void UpdateFriendRequestsMenu()
+        {
+            friendRequestsMenu.DropDownItems.Clear();
+            List<string> friendRequests = GetFriendRequests();
+            if (friendRequests.Count > 0)
+            {
+                foreach (string f in friendRequests)
+                {
+                    ToolStripMenuItem fItem = new ToolStripMenuItem(f);
+                    fItem.Click += FriendRequestMenuItem_Click;
+                    friendRequestsMenu.DropDownItems.Add(fItem);
+                }
+                friendRequestsMenu.Visible = true;
+            }
+            else
+            {
+                friendRequestsMenu.Visible = false;
+            }
+        }
+
+        private void FriendRequestMenuItem_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem menuItem = sender as ToolStripMenuItem;
+
+            try
+            {
+                ClientProcess.SendRequest(string.Format("acceptfriendrequest {0}", menuItem.Text));
+                ClientResponse response = ClientProcess.ReceiveResponse();
+                if (response.Status != ElizaStatus.STATUS_SUCCESS)
+                {
+                    throw new ElizaClientException(response.Status);
+                }
+                UpdateFriendList();
+                UpdateFriendRequestsMenu();
+            }
+            catch (ElizaClientException ex)
+            {
+                Program.ErrorMessage(ex.Message);
             }
         }
 
@@ -71,6 +124,34 @@ namespace Eliza_Desktop_App
                 return friendList;
             }
             catch(ElizaClientException ex)
+            {
+                Program.ErrorMessage(ex.Message);
+                return null;
+            }
+        }
+
+        private List<string> GetFriendRequests()
+        {
+            try
+            {
+                ClientProcess.SendRequest("queryfriendrequests");
+                ClientResponse response = ClientProcess.ReceiveResponse();
+                if (response.Status != ElizaStatus.STATUS_SUCCESS)
+                {
+                    throw new ElizaClientException(response.Status);
+                }
+                string[] friends = response.Message.Split(new char[] { '\n' });
+                List<string> friendRequests = new List<string>();
+                foreach (string s in friends)
+                {
+                    if (s != "")
+                    {
+                        friendRequests.Add(s);
+                    }
+                }
+                return friendRequests;
+            }
+            catch (ElizaClientException ex)
             {
                 Program.ErrorMessage(ex.Message);
                 return null;
@@ -136,6 +217,7 @@ namespace Eliza_Desktop_App
 
         private void signOutMenuButton_Click(object sender, EventArgs e)
         {
+            timerRefresh.Stop();
             ClientProcess.SendRequest("logout");
             ElizaStatus status = ClientProcess.ReceiveResponse().Status;
             LogOutPressed(status);
@@ -238,6 +320,39 @@ namespace Eliza_Desktop_App
             {
                 Program.ErrorMessage(ex.Message);
             }
+        }
+
+        private void addFriendMenuButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SendFriendRequestDialog dlg = new SendFriendRequestDialog();
+                if (dlg.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                ClientProcess.SendRequest(string.Format("friendrequest {0}", dlg.UserName));
+                ClientResponse response = ClientProcess.ReceiveResponse();
+                if (response.Status == ElizaStatus.STATUS_SUCCESS)
+                {
+                    MessageBox.Show("Friend Request sent succesfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    throw new ElizaClientException(response.Status);
+                }
+            }
+            catch (ElizaClientException ex)
+            {
+                Program.ErrorMessage(ex.Message);
+            }
+        }
+
+        private void timerRefresh_Tick(object sender, EventArgs e)
+        {
+            UpdateFriendList();
+            UpdateFriendRequestsMenu();
         }
     }
 }

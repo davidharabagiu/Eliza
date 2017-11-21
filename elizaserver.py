@@ -71,6 +71,8 @@ class ClientHandler(threading.Thread):
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
             return serverrequests.queryfriendrequestsent(self.username, request[1], clients_logged_in)
+        elif request[0].lower() == 'queryfriendrequests':
+            return serverrequests.queryfriendrequests(self.username, clients_logged_in)
         elif request[0].lower() == 'queryfriendrequestreceived':
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
