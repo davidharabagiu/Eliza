@@ -47,9 +47,9 @@
             // textUsername
             // 
             this.textUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textUsername.Location = new System.Drawing.Point(161, 19);
+            this.textUsername.Location = new System.Drawing.Point(173, 19);
             this.textUsername.Name = "textUsername";
-            this.textUsername.Size = new System.Drawing.Size(161, 27);
+            this.textUsername.Size = new System.Drawing.Size(184, 27);
             this.textUsername.TabIndex = 0;
             // 
             // labelUsername
@@ -65,12 +65,13 @@
             // buttonCheckAvailability
             // 
             this.buttonCheckAvailability.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonCheckAvailability.Location = new System.Drawing.Point(328, 19);
+            this.buttonCheckAvailability.Location = new System.Drawing.Point(363, 19);
             this.buttonCheckAvailability.Name = "buttonCheckAvailability";
-            this.buttonCheckAvailability.Size = new System.Drawing.Size(141, 27);
+            this.buttonCheckAvailability.Size = new System.Drawing.Size(160, 27);
             this.buttonCheckAvailability.TabIndex = 2;
             this.buttonCheckAvailability.Text = "Check availability";
             this.buttonCheckAvailability.UseVisualStyleBackColor = true;
+            this.buttonCheckAvailability.Click += new System.EventHandler(this.buttonCheckAvailability_Click);
             // 
             // labelPassword
             // 
@@ -85,9 +86,9 @@
             // textPassword
             // 
             this.textPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textPassword.Location = new System.Drawing.Point(161, 52);
+            this.textPassword.Location = new System.Drawing.Point(173, 52);
             this.textPassword.Name = "textPassword";
-            this.textPassword.Size = new System.Drawing.Size(161, 27);
+            this.textPassword.Size = new System.Drawing.Size(184, 27);
             this.textPassword.TabIndex = 3;
             this.textPassword.UseSystemPasswordChar = true;
             // 
@@ -104,18 +105,18 @@
             // textRepeatPassword
             // 
             this.textRepeatPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textRepeatPassword.Location = new System.Drawing.Point(161, 85);
+            this.textRepeatPassword.Location = new System.Drawing.Point(173, 85);
             this.textRepeatPassword.Name = "textRepeatPassword";
-            this.textRepeatPassword.Size = new System.Drawing.Size(161, 27);
+            this.textRepeatPassword.Size = new System.Drawing.Size(184, 27);
             this.textRepeatPassword.TabIndex = 5;
             this.textRepeatPassword.UseSystemPasswordChar = true;
             // 
             // buttonAddProfilePic
             // 
             this.buttonAddProfilePic.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonAddProfilePic.Location = new System.Drawing.Point(122, 217);
+            this.buttonAddProfilePic.Location = new System.Drawing.Point(122, 214);
             this.buttonAddProfilePic.Name = "buttonAddProfilePic";
-            this.buttonAddProfilePic.Size = new System.Drawing.Size(211, 27);
+            this.buttonAddProfilePic.Size = new System.Drawing.Size(211, 30);
             this.buttonAddProfilePic.TabIndex = 7;
             this.buttonAddProfilePic.Text = "Add Profile Picture (optional)";
             this.buttonAddProfilePic.UseVisualStyleBackColor = true;
@@ -136,19 +137,19 @@
             this.textDescription.Location = new System.Drawing.Point(122, 144);
             this.textDescription.Multiline = true;
             this.textDescription.Name = "textDescription";
-            this.textDescription.Size = new System.Drawing.Size(347, 67);
+            this.textDescription.Size = new System.Drawing.Size(401, 64);
             this.textDescription.TabIndex = 9;
-            this.textDescription.Visible = false;
             // 
             // buttonRegister
             // 
             this.buttonRegister.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonRegister.Location = new System.Drawing.Point(270, 262);
+            this.buttonRegister.Location = new System.Drawing.Point(324, 263);
             this.buttonRegister.Name = "buttonRegister";
             this.buttonRegister.Size = new System.Drawing.Size(199, 32);
             this.buttonRegister.TabIndex = 10;
             this.buttonRegister.Text = "Complete Registration";
             this.buttonRegister.UseVisualStyleBackColor = true;
+            this.buttonRegister.Click += new System.EventHandler(this.buttonRegister_Click);
             // 
             // labelDescription
             // 
@@ -164,7 +165,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(481, 307);
+            this.ClientSize = new System.Drawing.Size(535, 307);
             this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.buttonRegister);
             this.Controls.Add(this.textDescription);

@@ -37,6 +37,7 @@ namespace Eliza_Desktop_App
         private void buttonRegister_Click(object sender, EventArgs e)
         {
             FormRegister frm = new FormRegister();
+            frm.ClientProcess = ClientProcess;
             frm.Show();
         }
     }

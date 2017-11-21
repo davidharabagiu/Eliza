@@ -33,16 +33,16 @@
             this.labelDescription = new System.Windows.Forms.Label();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.optionsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.addFriendMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.signOutMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.exitMenuButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.friendRequestsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.textDescription = new System.Windows.Forms.TextBox();
             this.buttonSaveDescription = new System.Windows.Forms.Button();
             this.buttonDiscardDescription = new System.Windows.Forms.Button();
             this.listViewFriends = new System.Windows.Forms.ListView();
             this.columnHeaderUsername = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderOnline = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.addFriendMenuButton = new System.Windows.Forms.ToolStripMenuItem();
-            this.friendRequestsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.timerRefresh = new System.Windows.Forms.Timer(this.components);
             this.pictureProfile = new System.Windows.Forms.PictureBox();
             this.mainMenu.SuspendLayout();
@@ -92,6 +92,13 @@
             this.optionsMenu.Size = new System.Drawing.Size(73, 24);
             this.optionsMenu.Text = "Options";
             // 
+            // addFriendMenuButton
+            // 
+            this.addFriendMenuButton.Name = "addFriendMenuButton";
+            this.addFriendMenuButton.Size = new System.Drawing.Size(157, 26);
+            this.addFriendMenuButton.Text = "Add Friend";
+            this.addFriendMenuButton.Click += new System.EventHandler(this.addFriendMenuButton_Click);
+            // 
             // signOutMenuButton
             // 
             this.signOutMenuButton.Name = "signOutMenuButton";
@@ -104,6 +111,13 @@
             this.exitMenuButton.Name = "exitMenuButton";
             this.exitMenuButton.Size = new System.Drawing.Size(157, 26);
             this.exitMenuButton.Text = "Exit";
+            // 
+            // friendRequestsMenu
+            // 
+            this.friendRequestsMenu.Name = "friendRequestsMenu";
+            this.friendRequestsMenu.Size = new System.Drawing.Size(125, 24);
+            this.friendRequestsMenu.Text = "Friend Requests";
+            this.friendRequestsMenu.Visible = false;
             // 
             // textDescription
             // 
@@ -157,23 +171,8 @@
             // 
             this.columnHeaderOnline.Text = "Online";
             // 
-            // addFriendMenuButton
-            // 
-            this.addFriendMenuButton.Name = "addFriendMenuButton";
-            this.addFriendMenuButton.Size = new System.Drawing.Size(157, 26);
-            this.addFriendMenuButton.Text = "Add Friend";
-            this.addFriendMenuButton.Click += new System.EventHandler(this.addFriendMenuButton_Click);
-            // 
-            // friendRequestsMenu
-            // 
-            this.friendRequestsMenu.Name = "friendRequestsMenu";
-            this.friendRequestsMenu.Size = new System.Drawing.Size(125, 24);
-            this.friendRequestsMenu.Text = "Friend Requests";
-            this.friendRequestsMenu.Visible = false;
-            // 
             // timerRefresh
             // 
-            this.timerRefresh.Enabled = true;
             this.timerRefresh.Interval = 10000;
             this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
             // 
