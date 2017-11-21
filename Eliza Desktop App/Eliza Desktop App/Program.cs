@@ -21,6 +21,15 @@ namespace Eliza_Desktop_App
         [STAThread]
         static void Main(string[] args)
         {
+            bool result;
+            var mutex = new System.Threading.Mutex(true, "ElizaUniqueAppId", out result);
+
+            if (!result)
+            {
+                ErrorMessage("Another instance of Eliza is already running.");
+                return;
+            }
+
             debugMode = false;
             if (args.Length > 0 && args[0] == "-debug")
             {
