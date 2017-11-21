@@ -118,6 +118,10 @@ class ClientHandler(threading.Thread):
             return serverrequests.queryprofilepic(self.username, request[1], clients_logged_in)
         elif request[0].lower() == 'setprofilepic':
             return serverrequests.setprofilepic(self.username, self.fileData, clients_logged_in)
+        elif request[0].lower() == 'queryuserexists':
+            if len(request) < 2:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.queryuserexists(request[1])
         elif request[0].lower() == 'filetransfer':
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS

@@ -22,6 +22,13 @@ def register(username, password):
         return requeststatus.STATUS_SUCCESS
 
 
+def queryuserexists(username):
+    if dbaccess.get_user_id(username) == -1:
+        return requeststatus.QUERYRESPONSE_FALSE
+    else:
+        return requeststatus.QUERYRESPONSE_TRUE
+
+
 def login(username, password, clients_logged_in, client):
     if username in clients_logged_in.keys():
         return requeststatus.STATUS_ALREADY_LOGGED_IN
