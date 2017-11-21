@@ -33,6 +33,7 @@
             this.labelUsername = new System.Windows.Forms.Label();
             this.textPassword = new System.Windows.Forms.TextBox();
             this.textUsername = new System.Windows.Forms.TextBox();
+            this.buttonRegister = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonLogin
@@ -83,10 +84,22 @@
             this.textUsername.Size = new System.Drawing.Size(185, 27);
             this.textUsername.TabIndex = 5;
             // 
+            // buttonRegister
+            // 
+            this.buttonRegister.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonRegister.Location = new System.Drawing.Point(76, 84);
+            this.buttonRegister.Name = "buttonRegister";
+            this.buttonRegister.Size = new System.Drawing.Size(110, 37);
+            this.buttonRegister.TabIndex = 10;
+            this.buttonRegister.Text = "Register";
+            this.buttonRegister.UseVisualStyleBackColor = true;
+            this.buttonRegister.Click += new System.EventHandler(this.buttonRegister_Click);
+            // 
             // LoginControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.buttonRegister);
             this.Controls.Add(this.buttonLogin);
             this.Controls.Add(this.labelPassword);
             this.Controls.Add(this.labelUsername);
@@ -106,5 +119,6 @@
         private System.Windows.Forms.Label labelUsername;
         private System.Windows.Forms.TextBox textPassword;
         private System.Windows.Forms.TextBox textUsername;
+        private System.Windows.Forms.Button buttonRegister;
     }
 }

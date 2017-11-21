@@ -33,5 +33,11 @@ namespace Eliza_Desktop_App
             textUsername.Text = "";
             textPassword.Text = "";
         }
+
+        private void buttonRegister_Click(object sender, EventArgs e)
+        {
+            FormRegister frm = new FormRegister();
+            frm.Show();
+        }
     }
 }
