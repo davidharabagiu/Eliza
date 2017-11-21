@@ -236,7 +236,7 @@ def queryfriends(username, clients_logged_in):
         if userid >= 0:
             friendlist = dbaccess.get_friends(userid)
             if friendlist is None:
-                return requeststatus.STATUS_DATABASE_ERROR
+                return requeststatus.STATUS_SUCCESS, ""
             else:
                 friend_list_pretty = ""
                 for friend in friendlist:
