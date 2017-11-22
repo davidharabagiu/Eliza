@@ -86,7 +86,22 @@ namespace Eliza_Desktop_App
 
             try
             {
-                ClientProcess.SendRequest(string.Format("acceptfriendrequest {0}", menuItem.Text));
+                DialogResult res = MessageBox.Show(string.Format("Accept {0} as friend?", menuItem.Text),
+                    "Respond to friend request",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+                if (res == DialogResult.Yes)
+                {
+                    ClientProcess.SendRequest(string.Format("acceptfriendrequest {0}", menuItem.Text));
+                }
+                else if (res == DialogResult.No)
+                {
+                    ClientProcess.SendRequest(string.Format("declinefriendrequest {0}", menuItem.Text));
+                }
+                else
+                {
+                    return;
+                }
                 ClientResponse response = ClientProcess.ReceiveResponse();
                 if (response.Status != ElizaStatus.STATUS_SUCCESS)
                 {

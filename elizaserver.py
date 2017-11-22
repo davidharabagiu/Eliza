@@ -62,10 +62,11 @@ class ClientHandler(threading.Thread):
         elif request[0].lower() == 'acceptfriendrequest':
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.acceptfriendrequest(request[1], self.username, clients_logged_in)
         elif request[0].lower() == 'declinefriendrequest':
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
-            return serverrequests.acceptfriendrequest(request[1], self.username, clients_logged_in)
+            return serverrequests.declinefriendrequest(request[1], self.username, clients_logged_in)
         elif request[0].lower() == 'queryfriendship':
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
