@@ -23,12 +23,16 @@ namespace Eliza_Desktop_App
 
         private void buttonLogin_Click(object sender, EventArgs e)
         {
-            ClientProcess.SendRequest(string.Format(
-                "login {0} {1}",
-                textUsername.Text,
-                textPassword.Text));
+            if (textUsername.Text.Length == 0)
+            {
+                MessageDialogs.Error("Username field can't be empty.");
+            }
+            if (textPassword.Text.Length == 0)
+            {
+                MessageDialogs.Error("Password field can't be empty.");
+            }
 
-            ElizaStatus status = ClientProcess.ReceiveResponse().Status;
+            ElizaStatus status = ClientProcess.Login(textUsername.Text, textPassword.Text);
             LogInPressed(status, textUsername.Text);
             textUsername.Text = "";
             textPassword.Text = "";

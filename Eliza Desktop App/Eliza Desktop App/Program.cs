@@ -26,7 +26,7 @@ namespace Eliza_Desktop_App
 
             if (!result)
             {
-                ErrorMessage("Another instance of Eliza is already running.");
+                MessageDialogs.Error("Another instance of Eliza is already running.");
                 return;
             }
 
@@ -40,11 +40,6 @@ namespace Eliza_Desktop_App
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FormMain(elizaClient));
-        }
-
-        public static void ErrorMessage(string msg)
-        {
-            MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

@@ -52,7 +52,15 @@
     <Compile Include="ElizaClient.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ElizaClientException.cs" />
+    <Compile Include="ElizaClient.Requests.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FormChat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormChat.Designer.cs">
+      <DependentUpon>FormChat.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,6 +85,7 @@
     <Compile Include="MainChatControl.Designer.cs">
       <DependentUpon>MainChatControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="MessageDialogs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendFriendRequestDialog.cs">
@@ -85,6 +94,9 @@
     <Compile Include="SendFriendRequestDialog.Designer.cs">
       <DependentUpon>SendFriendRequestDialog.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="FormChat.resx">
+      <DependentUpon>FormChat.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
@@ -131,6 +143,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Heart.ico" />
+    <None Include="Resources\Ball-red-64.png" />
+    <None Include="Resources\Ball-green-64.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

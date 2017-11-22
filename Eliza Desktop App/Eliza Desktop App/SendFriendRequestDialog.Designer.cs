@@ -54,6 +54,7 @@
             this.MinimizeBox = false;
             this.Name = "SendFriendRequestDialog";
             this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "User Name";
             this.ResumeLayout(false);

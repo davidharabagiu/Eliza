@@ -63,6 +63,26 @@ namespace Eliza_Desktop_App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Ball_green_64 {
+            get {
+                object obj = ResourceManager.GetObject("Ball-green-64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Ball_red_64 {
+            get {
+                object obj = ResourceManager.GetObject("Ball-red-64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap default_profile_pic {
             get {
                 object obj = ResourceManager.GetObject("default-profile-pic", resourceCulture);

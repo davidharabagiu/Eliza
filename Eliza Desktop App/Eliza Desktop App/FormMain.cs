@@ -25,25 +25,11 @@ namespace Eliza_Desktop_App
             FormClosing += FormMain_FormClosing;
         }
 
-        private void MainChatControl_LogOutPressed(ElizaStatus status)
+        private void MainChatControl_LogOutPressed()
         {
-            try
-            {
-                if (status != ElizaStatus.STATUS_SUCCESS)
-                {
-                    throw new ElizaClientException(status);
-                }
-            }
-            catch (ElizaClientException ex)
-            {
-                Program.ErrorMessage(ex.Message);
-            }
-            finally
-            {
-                mainChatControl.Hide();
-                loginControl.Show();
-                pictureBoxLogo.Show();
-            }
+            mainChatControl.Hide();
+            loginControl.Show();
+            pictureBoxLogo.Show();
         }
 
         private void LoginControl_LogInPressed(ElizaStatus status, string userName)
@@ -57,14 +43,10 @@ namespace Eliza_Desktop_App
                     mainChatControl.Show();
                     break;
                 case ElizaStatus.STATUS_INVALID_CREDENTIALS:
-                case ElizaStatus.STATUS_INVALID_REQUEST_PARAMETERS:
-                    Program.ErrorMessage("Invalid username or password.");
+                    MessageDialogs.Error("Invalid username or password.");
                     break;
                 case ElizaStatus.STATUS_ALREADY_LOGGED_IN:
-                    Program.ErrorMessage(string.Format("{0} is already logged in.", userName));
-                    break;
-                default:
-                    Program.ErrorMessage(string.Format("An unknown error occured: {0}.", (int)status));
+                    MessageDialogs.Error(string.Format("{0} is already logged in.", userName));
                     break;
             }
         }

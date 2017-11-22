@@ -67,7 +67,7 @@ namespace Eliza_Desktop_App
         }
     }
 
-    public class ElizaClient : Process
+    public partial class ElizaClient : Process
     {
         private NamedPipeServerStream pipeServerStream;
         private BinaryReader reader;
@@ -85,20 +85,20 @@ namespace Eliza_Desktop_App
             writer = new BinaryWriter(pipeServerStream);
         }
 
-        public void SendRequest(string request)
+        private void SendRequest(string request)
         {
             byte[] buffer = Encoding.ASCII.GetBytes(request);
             writer.Write((uint)buffer.Length);
             writer.Write(buffer);
         }
 
-        public ClientResponse ReceiveResponse()
+        private ClientResponse ReceiveResponse()
         {
             int len = (int)reader.ReadUInt32();
             return new ClientResponse(new string(reader.ReadChars(len)));
         }
 
-        public byte[] ReceiveFile(int fileLength)
+        private byte[] ReceiveFile(int fileLength)
         {
             int bytesReceived = 0;
             int len = 0;
@@ -119,7 +119,7 @@ namespace Eliza_Desktop_App
             return Convert.FromBase64String(sBase64FileData);
         }
 
-        public ClientResponse SendFile(byte[] fileData)
+        private ClientResponse SendFile(byte[] fileData)
         {
             char[] base64FileData = Convert.ToBase64String(fileData).ToCharArray();
             SendRequest(string.Format("filetransfer {0}", base64FileData.Length));

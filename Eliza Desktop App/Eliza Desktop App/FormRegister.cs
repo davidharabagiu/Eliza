@@ -23,32 +23,13 @@ namespace Eliza_Desktop_App
 
         private void buttonCheckAvailability_Click(object sender, EventArgs e)
         {
-            try
+            if (ClientProcess.IsUsernameAvailable(textUsername.Text))
             {
-                ClientProcess.SendRequest(string.Format("queryuserexists {0}", textUsername.Text));
-                ClientResponse response = ClientProcess.ReceiveResponse();
-                if (response.Status == ElizaStatus.QUERYRESPONSE_TRUE)
-                {
-                    MessageBox.Show("This username is already taken",
-                        "Not available",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Exclamation);
-                }
-                else if (response.Status == ElizaStatus.QUERYRESPONSE_FALSE)
-                {
-                    MessageBox.Show("This username is available",
-                        "Available",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
-                }
-                else
-                {
-                    throw new ElizaClientException(response.Status);
-                }
+                MessageDialogs.Info("This username is available");
             }
-            catch (ElizaClientException ex)
+            else
             {
-                Program.ErrorMessage(ex.Message);
+                MessageDialogs.Warning("This username is already taken");
             }
         }
 
@@ -56,101 +37,63 @@ namespace Eliza_Desktop_App
         {
             if (textUsername.Text == "")
             {
-                Program.ErrorMessage("The username field can't be empty.");
-                return;
+                MessageDialogs.Error("The username field can't be empty.");
             }
             else if (textPassword.Text == "")
             {
-                Program.ErrorMessage("The password field can't be empty");
-                return;
+                MessageDialogs.Error("The password field can't be empty");
             }
             else if (textPassword.Text != textRepeatPassword.Text)
             {
-                Program.ErrorMessage("Passwords don't match.");
-                return;
+                MessageDialogs.Error("Passwords do not match.");
             }
+            else
+            {
+                ElizaStatus status = ClientProcess.Register(textUsername.Text, textPassword.Text);
+                switch (status)
+                {
+                    case ElizaStatus.STATUS_SUCCESS:
+                        MessageDialogs.Info("Registration completed successfully.");
+                        ClientProcess.Login(textUsername.Text, textPassword.Text);
+                        
+                        if (textDescription.Text.Length > 1000)
+                        {
+                            textDescription.Text = textDescription.Text.Substring(0, 1000);
+                            ClientProcess.SetDescription(textDescription.Text);
+                        }
 
-            try
-            {
-                ClientProcess.SendRequest(string.Format("register {0} {1}", textUsername.Text, textPassword.Text));
-                ClientResponse response = ClientProcess.ReceiveResponse();
-                if (response.Status == ElizaStatus.STATUS_SUCCESS)
-                {
-                    MessageBox.Show("Registration completed successfully",
-                        "Success",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
-                    ClientProcess.SendRequest(string.Format("login {0} {1}", textUsername.Text, textPassword.Text));
-                    ElizaStatus status = ClientProcess.ReceiveResponse().Status;
-                    if (profilePictureChanged)
-                    {
-                        UpdateProfilePicture();
-                    }
-                    UpdateProfileDescription();
-                    ClientProcess.SendRequest("logout");
-                    status = ClientProcess.ReceiveResponse().Status;
-                    this.Close();
-                }
-                else
-                {
-                    throw new ElizaClientException(response.Status);
-                }
-            }
-            catch (ElizaClientException ex)
-            {
-                Program.ErrorMessage(ex.Message);
-            }
-        }
+                        if (profilePictureChanged)
+                        {
+                            ClientProcess.SetProfilePicture(pictureProfile.Image);
+                        }
 
-        private void UpdateProfilePicture()
-        {
-            try
-            {
-                byte[] fileData;
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    pictureProfile.Image.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-                    fileData = ms.ToArray();
-                }
-                ClientResponse response = ClientProcess.SendFile(fileData);
-                if (response.Status != ElizaStatus.STATUS_SUCCESS)
-                {
-                    throw new ElizaClientException(response.Status);
-                }
-                ClientProcess.SendRequest("setprofilepic");
-                response = ClientProcess.ReceiveResponse();
-                if (response.Status != ElizaStatus.STATUS_SUCCESS)
-                {
-                    throw new ElizaClientException(response.Status);
-                }
-            }
-            catch (ElizaClientException ex)
-            {
-                Program.ErrorMessage(ex.Message);
-            }
-        }
+                        ClientProcess.Logout();
+                        break;
 
-        private void UpdateProfileDescription()
-        {
-            try
-            {
-                if (textDescription.Text.Length > 1000)
-                {
-                    Program.ErrorMessage("Description too long.");
-                    return;
-                }
-                ClientProcess.SendRequest(string.Format("setdescription {0}", textDescription.Text));
-                ElizaStatus status = ClientProcess.ReceiveResponse().Status;
-                if (status != ElizaStatus.STATUS_SUCCESS)
-                {
-                    throw new ElizaClientException(status);
-                }
-                labelDescription.Text = textDescription.Text;
+                    case ElizaStatus.STATUS_USERNAME_TOO_LONG:
+                        MessageDialogs.Error("The username should be at most 30 characters long.");
+                        break;
 
-            }
-            catch (ElizaClientException ex)
-            {
-                Program.ErrorMessage(ex.Message);
+                    case ElizaStatus.STATUS_USERNAME_TOO_SHORT:
+                        MessageDialogs.Error("The username should be at least 5 characters long.");
+                        break;
+
+                    case ElizaStatus.STATUS_PASSWORD_TOO_LONG:
+                        MessageDialogs.Error("The password should be at most 20 characters long.");
+                        break;
+
+                    case ElizaStatus.STATUS_PASSWORD_TOO_SHORT:
+                        MessageDialogs.Error("The password should be at least 5 characters long.");
+                        break;
+
+                    case ElizaStatus.STATUS_USERNAME_NON_ALPHANUMERIC:
+                        MessageDialogs.Error("The username should contain only letters and digits.");
+                        break;
+
+                    case ElizaStatus.STATUS_USERNAME_ALREADY_EXISTS:
+                        MessageDialogs.Error("The username is already taken.");
+                        break;
+                }
             }
         }
 
