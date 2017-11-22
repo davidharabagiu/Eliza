@@ -98,6 +98,11 @@ def accept_friend_request(userid1, userid2):
     return executesql(sql2, (userid1, userid2))
 
 
+def decline_friend_request(userid1, userid2):
+    sql = "DELETE FROM friendrequests WHERE user_from = %s AND user_to = %s"
+    return executesql(sql, (userid1, userid2))
+
+
 def delete_friendship(userid1, userid2):
     sql = ("DELETE FROM friendships WHERE (user1 = %s AND user2 = %s) OR "
            "(user1 = %s AND user2 = %s)")

@@ -116,6 +116,23 @@ def acceptfriendrequest(username_from, username_to, clients_logged_in):
             return requeststatus.STATUS_NON_EXISTENT_USER
 
 
+def declinefriendrequest(username_from, username_to, clients_logged_in):
+    if username_to not in clients_logged_in.keys():
+        return requeststatus.STATUS_NOT_LOGGED_IN
+    else:
+        userid_from = dbaccess.get_user_id(username_from)
+        userid_to = dbaccess.get_user_id(username_to)
+        if userid_from >= 0 and userid_to >= 0:
+            if not dbaccess.friend_request_sent(userid_from, userid_to):
+                return requeststatus.STATUS_NO_FRIEND_REQUEST
+            elif dbaccess.decline_friend_request(userid_from, userid_to):
+                return requeststatus.STATUS_SUCCESS
+            else:
+                return requeststatus.STATUS_DATABASE_ERROR
+        else:
+            return requeststatus.STATUS_NON_EXISTENT_USER
+
+
 def queryfriendship(username1, username2, clients_logged_in):
     if username1 not in clients_logged_in.keys():
         return requeststatus.STATUS_NOT_LOGGED_IN
