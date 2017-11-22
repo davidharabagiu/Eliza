@@ -156,11 +156,13 @@
             this.columnHeaderUsername,
             this.columnHeaderOnline});
             this.listViewFriends.Location = new System.Drawing.Point(16, 147);
+            this.listViewFriends.MultiSelect = false;
             this.listViewFriends.Name = "listViewFriends";
             this.listViewFriends.Size = new System.Drawing.Size(475, 521);
             this.listViewFriends.TabIndex = 7;
             this.listViewFriends.UseCompatibleStateImageBehavior = false;
             this.listViewFriends.View = System.Windows.Forms.View.Details;
+            this.listViewFriends.DoubleClick += new System.EventHandler(this.listViewFriends_DoubleClick);
             // 
             // columnHeaderUsername
             // 

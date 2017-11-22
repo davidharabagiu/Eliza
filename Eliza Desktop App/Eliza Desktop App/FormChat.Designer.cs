@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormChat));
             this.textChat = new System.Windows.Forms.RichTextBox();
             this.labelUserName = new System.Windows.Forms.Label();
@@ -36,6 +37,7 @@
             this.labelDescription = new System.Windows.Forms.Label();
             this.textMessage = new System.Windows.Forms.TextBox();
             this.buttonSend = new System.Windows.Forms.Button();
+            this.timerCheckOnline = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureOnlineStatus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureProfile)).BeginInit();
             this.SuspendLayout();
@@ -45,11 +47,12 @@
             this.textChat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.textChat.BackColor = System.Drawing.Color.White;
             this.textChat.Location = new System.Drawing.Point(12, 118);
             this.textChat.Name = "textChat";
             this.textChat.ReadOnly = true;
             this.textChat.Size = new System.Drawing.Size(715, 428);
-            this.textChat.TabIndex = 0;
+            this.textChat.TabIndex = 2;
             this.textChat.Text = "";
             // 
             // labelUserName
@@ -103,7 +106,7 @@
             this.textMessage.Location = new System.Drawing.Point(13, 553);
             this.textMessage.Name = "textMessage";
             this.textMessage.Size = new System.Drawing.Size(664, 27);
-            this.textMessage.TabIndex = 6;
+            this.textMessage.TabIndex = 0;
             // 
             // buttonSend
             // 
@@ -111,9 +114,15 @@
             this.buttonSend.Location = new System.Drawing.Point(683, 552);
             this.buttonSend.Name = "buttonSend";
             this.buttonSend.Size = new System.Drawing.Size(44, 28);
-            this.buttonSend.TabIndex = 7;
+            this.buttonSend.TabIndex = 1;
             this.buttonSend.Text = ">";
             this.buttonSend.UseVisualStyleBackColor = true;
+            // 
+            // timerCheckOnline
+            // 
+            this.timerCheckOnline.Enabled = true;
+            this.timerCheckOnline.Interval = 1000;
+            this.timerCheckOnline.Tick += new System.EventHandler(this.timerCheckOnline_Tick);
             // 
             // FormChat
             // 
@@ -148,5 +157,6 @@
         private System.Windows.Forms.Label labelDescription;
         private System.Windows.Forms.TextBox textMessage;
         private System.Windows.Forms.Button buttonSend;
+        private System.Windows.Forms.Timer timerCheckOnline;
     }
 }

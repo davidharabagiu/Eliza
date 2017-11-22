@@ -205,5 +205,15 @@ namespace Eliza_Desktop_App
             UpdateFriendList();
             UpdateFriendRequestsMenu();
         }
+
+        private void listViewFriends_DoubleClick(object sender, EventArgs e)
+        {
+            if (listViewFriends.SelectedItems.Count > 0)
+            {
+                FormChat chat = new FormChat();
+                chat.Setup(ClientProcess, listViewFriends.SelectedItems[0].Text);
+                chat.Show();
+            }
+        }
     }
 }

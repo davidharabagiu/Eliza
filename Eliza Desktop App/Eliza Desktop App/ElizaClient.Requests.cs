@@ -62,6 +62,24 @@ namespace Eliza_Desktop_App
             return false;
         }
 
+        public bool IsUserOnline(string username)
+        {
+            this.SendRequest(string.Format("queryonline {0}", username));
+            ElizaStatus status = this.ReceiveResponse().Status;
+
+            if (status == ElizaStatus.QUERYRESPONSE_TRUE)
+            {
+                return true;
+            }
+            else if (status == ElizaStatus.QUERYRESPONSE_FALSE)
+            {
+                return false;
+            }
+
+            UnexpectedError(status);
+            return false;
+        }
+
         public ElizaStatus Register(string username, string password)
         {
             this.SendRequest(string.Format("register {0} {1}", username, password));
