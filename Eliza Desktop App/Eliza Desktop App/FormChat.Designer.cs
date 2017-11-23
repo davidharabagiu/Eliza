@@ -94,6 +94,7 @@
             this.textMessage.Name = "textMessage";
             this.textMessage.Size = new System.Drawing.Size(664, 27);
             this.textMessage.TabIndex = 0;
+            this.textMessage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textMessage_KeyDown);
             // 
             // buttonSend
             // 
@@ -104,6 +105,7 @@
             this.buttonSend.TabIndex = 1;
             this.buttonSend.Text = ">";
             this.buttonSend.UseVisualStyleBackColor = true;
+            this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
             // 
             // timerCheckOnline
             // 

@@ -118,5 +118,18 @@ namespace Eliza_Desktop_App
                 }
             }
         }
+
+        private void textMessage_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                SendMessage();
+            }
+        }
+
+        private void buttonSend_Click(object sender, EventArgs e)
+        {
+            SendMessage();
+        }
     }
 }
