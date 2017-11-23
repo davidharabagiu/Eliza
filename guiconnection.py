@@ -2,8 +2,8 @@ import struct
 
 
 class GuiPipe:
-    def __init__(self):
-        self.fh = open(r'\\.\pipe\elizapipe', 'r+b', 0)
+    def __init__(self, pipe_name, mode):
+        self.fh = open(r'\\.\pipe\\' + pipe_name, mode, 0)
 
     def send(self, resp):
         self.fh.write(struct.pack('I', len(resp)) + resp)

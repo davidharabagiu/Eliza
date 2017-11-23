@@ -12,13 +12,15 @@ class ReceiverThread(threading.Thread):
         super(ReceiverThread, self).__init__()
         self.sock = sock
         self.running = False
+        self.gui_pipe_msg = guiconnection.GuiPipe('elizapipemsg', 'wb')
 
     def run(self):
         self.running = True
         while self.running:
             try:
                 msg = self.sock.recv(1024)
-                print msg
+                self.gui_pipe_msg.send(msg)
+                print 'Message received: ' + msg
                 if len(msg) == 0:
                     break
             except socket.error as err:
@@ -34,7 +36,7 @@ if __name__ == '__main__':
     expectedFileSize = 0
     fileData = ''
     fileTransferBytesReceived = 0
-    gui_pipe = guiconnection.GuiPipe()
+    gui_pipe = guiconnection.GuiPipe('elizapipe', 'r+b')
 
     if sys.executable.endswith('pythonw.exe'):
         sys.stdout = open('elizaclient.log', 'w')

@@ -156,6 +156,7 @@ namespace Eliza_Desktop_App
 
         private void FormChat_FormClosing(object sender, FormClosingEventArgs e)
         {
+            clientProcess.MessageReceived -= ClientProcess_MessageReceived;
             chatBoxMutex.Close();
         }
     }
