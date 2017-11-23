@@ -12,7 +12,7 @@ class ReceiverThread(threading.Thread):
         super(ReceiverThread, self).__init__()
         self.sock = sock
         self.running = False
-        self.gui_pipe_msg = guiconnection.GuiPipe('elizapipemsg', 'wb')
+        self.gui_pipe_msg = guiconnection.GuiPipe('elizapipemsg', 'r+b')
 
     def run(self):
         self.running = True

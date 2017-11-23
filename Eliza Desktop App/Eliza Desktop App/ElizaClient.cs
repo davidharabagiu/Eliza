@@ -82,7 +82,7 @@ namespace Eliza_Desktop_App
         public ElizaClient() : base()
         {
             pipeServerStream = new NamedPipeServerStream("elizapipe", PipeDirection.InOut);
-            pipeMessagesServerStream = new NamedPipeServerStream("elizapipemsg", PipeDirection.In);
+            pipeMessagesServerStream = new NamedPipeServerStream("elizapipemsg", PipeDirection.InOut);
 
             StartInfo.FileName = Program.DebugMode ? "python" : "pythonw";
             StartInfo.Arguments = Program.ElizaClientScriptPath;
@@ -94,6 +94,7 @@ namespace Eliza_Desktop_App
             writer = new BinaryWriter(pipeServerStream);
 
             inboundMessagesThread = new Thread(new ThreadStart(ListenToInboundMessages));
+            inboundMessagesThread.Start();
         }
 
         private void ListenToInboundMessages()
