@@ -1,6 +1,7 @@
 import socket
 import threading
 import guiconnection
+import sys
 
 
 host, port1, port2 = 'elizaserver.ddns.net', 9999, 9998
@@ -35,6 +36,13 @@ if __name__ == '__main__':
     fileTransferBytesReceived = 0
     gui_pipe = guiconnection.GuiPipe()
 
+    if sys.executable.endswith('pythonw.exe'):
+        sys.stdout = open('elizaclient.log', 'w')
+        sys.stderr = sys.stdout
+        redirect_stdout = True
+    else:
+        redirect_stdout = False
+
     try:
         sock1.connect((host, port1))
         sock2.connect((host, port2))
@@ -54,9 +62,9 @@ if __name__ == '__main__':
                 if request == 'exit':
                     break
                 sock1.sendall(request)
-                print 'Request sent: ' + request
+                print 'Sent: ' + request
                 response = sock1.recv(1024)
-                print 'Response received: ' + response
+                print 'Received: ' + response
                 gui_pipe.send(response)
                 if request.startswith('queryprofilepic '):
                     fileTransferMode = True
@@ -66,6 +74,8 @@ if __name__ == '__main__':
     except socket.error as err:
         print err
     finally:
+        if redirect_stdout:
+            sys.stdout.close()
         sock1.close()
         sock2.close()
         receiver.running = False

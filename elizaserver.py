@@ -178,7 +178,8 @@ class ClientHandler(threading.Thread):
                 self.client.sendall(response)
                 if request[0].lower() == 'queryprofilepic':
                     file_transfer = True
-            except socket.error:
+            except socket.error as e:
+                print e
                 serverrequests.logout(self.username, clients_logged_in)
                 del clients[self.address]
                 print self.address, 'has disconnected'

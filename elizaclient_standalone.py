@@ -1,7 +1,5 @@
 import socket
 import threading
-import requeststatus
-import guiconnection
 
 
 host, port1, port2 = 'elizaserver.ddns.net', 9999, 9998
