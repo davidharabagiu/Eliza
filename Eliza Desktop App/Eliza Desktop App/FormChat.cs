@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,6 +17,7 @@ namespace Eliza_Desktop_App
         private string myUsername;
         private bool online;
         private ElizaClient clientProcess;
+        private Mutex chatBoxMutex;
 
         private string chatText = "<font face = \"Microsoft Sans Serif\" size = \"3\">";
 
@@ -42,6 +44,7 @@ namespace Eliza_Desktop_App
         public FormChat()
         {
             InitializeComponent();
+            chatBoxMutex = new Mutex();
         }
 
         private void FormChat_Load(object sender, EventArgs e)
@@ -64,6 +67,28 @@ namespace Eliza_Desktop_App
             if (profilePicture != null)
             {
                 pictureProfile.Image = profilePicture;
+            }
+
+            clientProcess.MessageReceived += ClientProcess_MessageReceived;
+        }
+
+        private void DisplayMessage(string username, string message)
+        {
+            chatBoxMutex.WaitOne();
+
+            chatText += string.Format("<font color = \"Blue\"><b>{0}: </b></font>{1}<br>",
+                            myUsername,
+                            textMessage.Text);
+            chatBox.DocumentText = chatText;
+
+            chatBoxMutex.ReleaseMutex();
+        }
+
+        private void ClientProcess_MessageReceived(string username, string message)
+        {
+            if (this.username == username)
+            {
+                DisplayMessage(username, message);
             }
         }
 
@@ -97,10 +122,7 @@ namespace Eliza_Desktop_App
                 switch (status)
                 {
                     case ElizaStatus.STATUS_SUCCESS:
-                        chatText += string.Format("<font color = \"Blue\"><b>{0}: </b></font>{1}<br>",
-                            myUsername,
-                            textMessage.Text);
-                        chatBox.DocumentText = chatText;
+                        DisplayMessage(myUsername, textMessage.Text);
                         textMessage.Clear();
                         break;
 
@@ -130,6 +152,11 @@ namespace Eliza_Desktop_App
         private void buttonSend_Click(object sender, EventArgs e)
         {
             SendMessage();
+        }
+
+        private void FormChat_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            chatBoxMutex.Close();
         }
     }
 }

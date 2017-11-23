@@ -137,6 +137,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormChat";
             this.Text = "Eliza";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormChat_FormClosing);
             this.Load += new System.EventHandler(this.FormChat_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureOnlineStatus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureProfile)).EndInit();
