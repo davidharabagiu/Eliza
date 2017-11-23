@@ -77,7 +77,7 @@ namespace Eliza_Desktop_App
             chatBoxMutex.WaitOne();
 
             chatText += string.Format("<font color = \"Blue\"><b>{0}: </b></font>{1}<br>",
-                            myUsername,
+                            username,
                             message);
             chatBox.DocumentText = chatText;
 
