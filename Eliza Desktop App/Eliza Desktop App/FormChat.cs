@@ -13,8 +13,11 @@ namespace Eliza_Desktop_App
     public partial class FormChat : Form
     {
         private string username;
+        private string myUsername;
         private bool online;
         private ElizaClient clientProcess;
+
+        private string chatText = "<font face = \"Microsoft Sans Serif\" size = \"3\">";
 
         private bool Online
         {
@@ -46,10 +49,11 @@ namespace Eliza_Desktop_App
             
         }
 
-        public void Setup(ElizaClient clientProcess, string username)
+        public void Setup(ElizaClient clientProcess, string myUsername, string username)
         {
             this.clientProcess = clientProcess;
             this.username = username;
+            this.myUsername = myUsername;
 
             this.Text = string.Format("Eliza - {0}", username);
             labelUserName.Text = username;
@@ -69,6 +73,49 @@ namespace Eliza_Desktop_App
             if (newOnlineStatus != Online)
             {
                 Online = newOnlineStatus;
+            }
+        }
+
+        private void SendMessage()
+        {
+            if (!Online)
+            {
+                MessageDialogs.Error(string.Format("{0} is offline.", username));
+            }
+            else if (textMessage.Text.Length < 1)
+            {
+                // nothing kek
+            }
+            else if (textMessage.Text.Length > 900)
+            {
+                MessageDialogs.Error(string.Format("The message can't be longer than 900 characters.", username));
+            }
+            else
+            {
+                ElizaStatus status = clientProcess.SendMessage(username, textMessage.Text);
+
+                switch (status)
+                {
+                    case ElizaStatus.STATUS_SUCCESS:
+                        chatText += string.Format("<font color = \"Blue\"><b>{0}: </b></font>{1}<br>",
+                            myUsername,
+                            textMessage.Text);
+                        chatBox.DocumentText = chatText;
+                        textMessage.Clear();
+                        break;
+
+                    case ElizaStatus.STATUS_USER_NOT_ONLINE:
+                        MessageDialogs.Error(string.Format("{0} is offline.", username));
+                        break;
+
+                    case ElizaStatus.STATUS_SENDER_BLOCKED:
+                        MessageDialogs.Error(string.Format("{0} blocked you.", username));
+                        break;
+
+                    case ElizaStatus.STATUS_RECEIVER_BLOCKED:
+                        MessageDialogs.Error(string.Format("You have blocked {0}.", username));
+                        break;
+                }
             }
         }
     }

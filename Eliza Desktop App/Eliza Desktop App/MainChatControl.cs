@@ -211,7 +211,7 @@ namespace Eliza_Desktop_App
             if (listViewFriends.SelectedItems.Count > 0)
             {
                 FormChat chat = new FormChat();
-                chat.Setup(ClientProcess, listViewFriends.SelectedItems[0].Text);
+                chat.Setup(ClientProcess, userName, listViewFriends.SelectedItems[0].Text);
                 chat.Show();
             }
         }

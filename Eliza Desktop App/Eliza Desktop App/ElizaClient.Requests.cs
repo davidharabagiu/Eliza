@@ -99,6 +99,22 @@ namespace Eliza_Desktop_App
             return status;
         }
 
+        public ElizaStatus SendMessage(string username, string message)
+        {
+            this.SendRequest(string.Format("sendmsg {0} {1}", username, message));
+            ElizaStatus status = this.ReceiveResponse().Status;
+
+            if (status != ElizaStatus.STATUS_SUCCESS &&
+                status != ElizaStatus.STATUS_SENDER_BLOCKED &&
+                status != ElizaStatus.STATUS_RECEIVER_BLOCKED &&
+                status != ElizaStatus.STATUS_USER_NOT_ONLINE)
+            {
+                UnexpectedError(status);
+            }
+
+            return status;
+        }
+
         public string GetDescription(string username)
         {
             this.SendRequest(string.Format("querydescription {0}", username));

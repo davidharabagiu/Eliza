@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormChat));
-            this.textChat = new System.Windows.Forms.RichTextBox();
             this.labelUserName = new System.Windows.Forms.Label();
             this.pictureOnlineStatus = new System.Windows.Forms.PictureBox();
             this.pictureProfile = new System.Windows.Forms.PictureBox();
@@ -38,22 +37,10 @@
             this.textMessage = new System.Windows.Forms.TextBox();
             this.buttonSend = new System.Windows.Forms.Button();
             this.timerCheckOnline = new System.Windows.Forms.Timer(this.components);
+            this.chatBox = new System.Windows.Forms.WebBrowser();
             ((System.ComponentModel.ISupportInitialize)(this.pictureOnlineStatus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureProfile)).BeginInit();
             this.SuspendLayout();
-            // 
-            // textChat
-            // 
-            this.textChat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textChat.BackColor = System.Drawing.Color.White;
-            this.textChat.Location = new System.Drawing.Point(12, 118);
-            this.textChat.Name = "textChat";
-            this.textChat.ReadOnly = true;
-            this.textChat.Size = new System.Drawing.Size(715, 428);
-            this.textChat.TabIndex = 2;
-            this.textChat.Text = "";
             // 
             // labelUserName
             // 
@@ -124,19 +111,27 @@
             this.timerCheckOnline.Interval = 1000;
             this.timerCheckOnline.Tick += new System.EventHandler(this.timerCheckOnline_Tick);
             // 
+            // chatBox
+            // 
+            this.chatBox.Location = new System.Drawing.Point(13, 118);
+            this.chatBox.MinimumSize = new System.Drawing.Size(20, 20);
+            this.chatBox.Name = "chatBox";
+            this.chatBox.Size = new System.Drawing.Size(714, 429);
+            this.chatBox.TabIndex = 6;
+            // 
             // FormChat
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(739, 592);
+            this.Controls.Add(this.chatBox);
             this.Controls.Add(this.buttonSend);
             this.Controls.Add(this.textMessage);
             this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.pictureOnlineStatus);
             this.Controls.Add(this.labelUserName);
             this.Controls.Add(this.pictureProfile);
-            this.Controls.Add(this.textChat);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormChat";
             this.Text = "Eliza";
@@ -149,8 +144,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.RichTextBox textChat;
         private System.Windows.Forms.Label labelUserName;
         private System.Windows.Forms.PictureBox pictureProfile;
         private System.Windows.Forms.PictureBox pictureOnlineStatus;
@@ -158,5 +151,6 @@
         private System.Windows.Forms.TextBox textMessage;
         private System.Windows.Forms.Button buttonSend;
         private System.Windows.Forms.Timer timerCheckOnline;
+        private System.Windows.Forms.WebBrowser chatBox;
     }
 }
