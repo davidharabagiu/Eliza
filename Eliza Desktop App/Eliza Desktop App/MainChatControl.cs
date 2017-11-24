@@ -169,7 +169,7 @@ namespace Eliza_Desktop_App
 
         private void addFriendMenuButton_Click(object sender, EventArgs e)
         {
-            SendFriendRequestDialog dlg = new SendFriendRequestDialog();
+            UserNameDialog dlg = new UserNameDialog();
             if (dlg.ShowDialog() != DialogResult.OK || dlg.UserName.Length == 0)
             {
                 return;
@@ -221,6 +221,17 @@ namespace Eliza_Desktop_App
         private void exitMenuButton_Click(object sender, EventArgs e)
         {
             ExitPressed();
+        }
+
+        private void openChatMenuButton_Click(object sender, EventArgs e)
+        {
+            UserNameDialog dlg = new UserNameDialog();
+            if (dlg.ShowDialog() == DialogResult.OK && dlg.UserName.Length > 0)
+            {
+                FormChat chat = new FormChat();
+                chat.Setup(ClientProcess, userName, dlg.UserName);
+                chat.Show();
+            }
         }
     }
 }

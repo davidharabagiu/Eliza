@@ -45,6 +45,7 @@
             this.columnHeaderOnline = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timerRefresh = new System.Windows.Forms.Timer(this.components);
             this.pictureProfile = new System.Windows.Forms.PictureBox();
+            this.openChatMenuButton = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureProfile)).BeginInit();
             this.SuspendLayout();
@@ -85,6 +86,7 @@
             // optionsMenu
             // 
             this.optionsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openChatMenuButton,
             this.addFriendMenuButton,
             this.signOutMenuButton,
             this.exitMenuButton});
@@ -95,21 +97,21 @@
             // addFriendMenuButton
             // 
             this.addFriendMenuButton.Name = "addFriendMenuButton";
-            this.addFriendMenuButton.Size = new System.Drawing.Size(181, 26);
+            this.addFriendMenuButton.Size = new System.Drawing.Size(213, 26);
             this.addFriendMenuButton.Text = "Add Friend";
             this.addFriendMenuButton.Click += new System.EventHandler(this.addFriendMenuButton_Click);
             // 
             // signOutMenuButton
             // 
             this.signOutMenuButton.Name = "signOutMenuButton";
-            this.signOutMenuButton.Size = new System.Drawing.Size(181, 26);
+            this.signOutMenuButton.Size = new System.Drawing.Size(213, 26);
             this.signOutMenuButton.Text = "Sign Out";
             this.signOutMenuButton.Click += new System.EventHandler(this.signOutMenuButton_Click);
             // 
             // exitMenuButton
             // 
             this.exitMenuButton.Name = "exitMenuButton";
-            this.exitMenuButton.Size = new System.Drawing.Size(181, 26);
+            this.exitMenuButton.Size = new System.Drawing.Size(213, 26);
             this.exitMenuButton.Text = "Exit";
             this.exitMenuButton.Click += new System.EventHandler(this.exitMenuButton_Click);
             // 
@@ -131,7 +133,7 @@
             // 
             // buttonSaveDescription
             // 
-            this.buttonSaveDescription.Location = new System.Drawing.Point(416, 144);
+            this.buttonSaveDescription.Location = new System.Drawing.Point(416, 147);
             this.buttonSaveDescription.Name = "buttonSaveDescription";
             this.buttonSaveDescription.Size = new System.Drawing.Size(75, 27);
             this.buttonSaveDescription.TabIndex = 5;
@@ -142,7 +144,7 @@
             // 
             // buttonDiscardDescription
             // 
-            this.buttonDiscardDescription.Location = new System.Drawing.Point(335, 144);
+            this.buttonDiscardDescription.Location = new System.Drawing.Point(335, 147);
             this.buttonDiscardDescription.Name = "buttonDiscardDescription";
             this.buttonDiscardDescription.Size = new System.Drawing.Size(75, 27);
             this.buttonDiscardDescription.TabIndex = 6;
@@ -192,6 +194,13 @@
             this.pictureProfile.TabStop = false;
             this.pictureProfile.DoubleClick += new System.EventHandler(this.pictureProfile_DoubleClick);
             // 
+            // openChatMenuButton
+            // 
+            this.openChatMenuButton.Name = "openChatMenuButton";
+            this.openChatMenuButton.Size = new System.Drawing.Size(213, 26);
+            this.openChatMenuButton.Text = "Open Chat Window";
+            this.openChatMenuButton.Click += new System.EventHandler(this.openChatMenuButton_Click);
+            // 
             // MainChatControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -232,5 +241,6 @@
         private System.Windows.Forms.ToolStripMenuItem addFriendMenuButton;
         private System.Windows.Forms.ToolStripMenuItem friendRequestsMenu;
         private System.Windows.Forms.Timer timerRefresh;
+        private System.Windows.Forms.ToolStripMenuItem openChatMenuButton;
     }
 }
