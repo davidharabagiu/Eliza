@@ -18,11 +18,23 @@ namespace Eliza_Desktop_App
         {
             InitializeComponent();
             this.elizaClient = elizaClient;
+            this.elizaClient.CommunicationError += ElizaClient_CommunicationError;
             mainChatControl.ClientProcess = elizaClient;
             mainChatControl.LogOutPressed += MainChatControl_LogOutPressed;
+            mainChatControl.ExitPressed += MainChatControl_ExitPressed;
             loginControl.ClientProcess = elizaClient;
             loginControl.LogInPressed += LoginControl_LogInPressed;
             FormClosing += FormMain_FormClosing;
+        }
+
+        private void ElizaClient_CommunicationError()
+        {
+            ExitProgram();
+        }
+
+        private void MainChatControl_ExitPressed()
+        {
+            ExitProgram();
         }
 
         private void MainChatControl_LogOutPressed()
@@ -51,9 +63,14 @@ namespace Eliza_Desktop_App
             }
         }
 
-        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        private void ExitProgram()
         {
             elizaClient.Close();
+        }
+
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ExitProgram();
         }
 
         private void FormMain_Load(object sender, EventArgs e)

@@ -95,22 +95,23 @@
             // addFriendMenuButton
             // 
             this.addFriendMenuButton.Name = "addFriendMenuButton";
-            this.addFriendMenuButton.Size = new System.Drawing.Size(157, 26);
+            this.addFriendMenuButton.Size = new System.Drawing.Size(181, 26);
             this.addFriendMenuButton.Text = "Add Friend";
             this.addFriendMenuButton.Click += new System.EventHandler(this.addFriendMenuButton_Click);
             // 
             // signOutMenuButton
             // 
             this.signOutMenuButton.Name = "signOutMenuButton";
-            this.signOutMenuButton.Size = new System.Drawing.Size(157, 26);
+            this.signOutMenuButton.Size = new System.Drawing.Size(181, 26);
             this.signOutMenuButton.Text = "Sign Out";
             this.signOutMenuButton.Click += new System.EventHandler(this.signOutMenuButton_Click);
             // 
             // exitMenuButton
             // 
             this.exitMenuButton.Name = "exitMenuButton";
-            this.exitMenuButton.Size = new System.Drawing.Size(157, 26);
+            this.exitMenuButton.Size = new System.Drawing.Size(181, 26);
             this.exitMenuButton.Text = "Exit";
+            this.exitMenuButton.Click += new System.EventHandler(this.exitMenuButton_Click);
             // 
             // friendRequestsMenu
             // 

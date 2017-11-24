@@ -78,6 +78,8 @@ namespace Eliza_Desktop_App
 
         public delegate void MessageReceivedEventHandler(string username, string message);
         public event MessageReceivedEventHandler MessageReceived;
+        public delegate void CommunicationErrorEventHandler();
+        public event CommunicationErrorEventHandler CommunicationError;
 
         public ElizaClient() : base()
         {
@@ -142,7 +144,7 @@ namespace Eliza_Desktop_App
                     "The client has encountered an unexpected problem and was forced to exit.\n" +
                     "Error message: {0}\nSee the log for more details.", ex.Message));
                 pipeServerStream.Close();
-                Process.GetCurrentProcess().Kill();
+                CommunicationError();
             }
         }
 
@@ -159,7 +161,7 @@ namespace Eliza_Desktop_App
                     "The client has encountered an unexpected problem and was forced to exit.\n" +
                     "Error message: {0}\nSee the log for more details.", ex.Message));
                 pipeServerStream.Close();
-                Process.GetCurrentProcess().Kill();
+                CommunicationError();
                 return new ClientResponse();
             }
         }
@@ -192,7 +194,7 @@ namespace Eliza_Desktop_App
                     "The client has encountered an unexpected problem and was forced to exit.\n" +
                     "Error message: {0}\nSee the log for more details.", ex.Message));
                 pipeServerStream.Close();
-                Process.GetCurrentProcess().Kill();
+                CommunicationError();
                 return null;
             }
         }
@@ -233,7 +235,7 @@ namespace Eliza_Desktop_App
                     "The client has encountered an unexpected problem and was forced to exit.\n" +
                     "Error message: {0}\nSee the log for more details.", ex.Message));
                 pipeServerStream.Close();
-                Process.GetCurrentProcess().Kill();
+                CommunicationError();
                 return new ClientResponse();
             }
         }

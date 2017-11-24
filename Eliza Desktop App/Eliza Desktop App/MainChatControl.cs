@@ -18,6 +18,8 @@ namespace Eliza_Desktop_App
         private bool emptyDescription;
         public delegate void LogOutPressedEventHandler();
         public event LogOutPressedEventHandler LogOutPressed;
+        public delegate void ExitPressedEventHandler();
+        public event LogOutPressedEventHandler ExitPressed;
 
         public MainChatControl()
         {
@@ -214,6 +216,11 @@ namespace Eliza_Desktop_App
                 chat.Setup(ClientProcess, userName, listViewFriends.SelectedItems[0].Text);
                 chat.Show();
             }
+        }
+
+        private void exitMenuButton_Click(object sender, EventArgs e)
+        {
+            ExitPressed();
         }
     }
 }
