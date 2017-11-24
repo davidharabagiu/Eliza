@@ -10,11 +10,11 @@ using System.Windows.Forms;
 
 namespace Eliza_Desktop_App
 {
-    public partial class SendFriendRequestDialog : Form
+    public partial class UserNameDialog : Form
     {
         public string UserName { get; set; }
 
-        public SendFriendRequestDialog()
+        public UserNameDialog()
         {
             InitializeComponent();
         }

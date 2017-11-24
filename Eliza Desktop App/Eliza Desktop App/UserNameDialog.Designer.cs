@@ -1,6 +1,6 @@
 ﻿namespace Eliza_Desktop_App
 {
-    partial class SendFriendRequestDialog
+    partial class UserNameDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SendFriendRequestDialog));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserNameDialog));
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
