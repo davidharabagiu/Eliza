@@ -4,7 +4,7 @@ import guiconnection
 import sys
 
 
-host, port1, port2 = 'elizaserver.ddns.net', 9999, 9998
+host, port1, port2 = 'elizaclient.ddns.net', 9999, 9998
 
 
 class ReceiverThread(threading.Thread):
