@@ -36,7 +36,7 @@ if __name__ == '__main__':
     expectedFileSize = 0
     fileData = ''
     fileTransferBytesReceived = 0
-    gui_pipe = guiconnection.GuiPipe('elizapipe', 'r+b')
+    gui_pipe = guiconnection.GuiPipe('elizapipe', 'r+b', sys.argv[1])
 
     if sys.executable.endswith('pythonw.exe'):
         sys.stdout = open('elizaclient.log', 'w')
