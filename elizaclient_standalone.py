@@ -2,7 +2,7 @@ import socket
 import threading
 
 
-host, port1, port2 = 'elizaserver.ddns.net', 9999, 9998
+host, port1, port2 = 'elizaserver2.ddns.net', 9999, 9998
 
 
 class ReceiverThread(threading.Thread):

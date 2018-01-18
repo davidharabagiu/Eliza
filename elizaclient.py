@@ -4,15 +4,15 @@ import guiconnection
 import sys
 
 
-host, port1, port2 = 'elizaclient.ddns.net', 9999, 9998
+host, port1, port2 = 'elizaserver2.ddns.net', 9999, 9998
 
 
 class ReceiverThread(threading.Thread):
-    def __init__(self, sock):
+    def __init__(self, sock, instance_id):
         super(ReceiverThread, self).__init__()
         self.sock = sock
         self.running = False
-        self.gui_pipe_msg = guiconnection.GuiPipe('elizapipemsg', 'r+b')
+        self.gui_pipe_msg = guiconnection.GuiPipe('elizapipemsg', 'r+b', instance_id)
 
     def run(self):
         self.running = True
@@ -31,7 +31,7 @@ class ReceiverThread(threading.Thread):
 if __name__ == '__main__':
     sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    receiver = ReceiverThread(sock2)
+    receiver = ReceiverThread(sock2, sys.argv[1])
     fileTransferMode = False
     expectedFileSize = 0
     fileData = ''
@@ -75,6 +75,7 @@ if __name__ == '__main__':
                     fileTransferBytesReceived = 0
     except socket.error as err:
         print err
+        raw_input()
     finally:
         if redirect_stdout:
             sys.stdout.close()
