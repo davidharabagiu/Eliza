@@ -83,11 +83,13 @@ namespace Eliza_Desktop_App
 
         public ElizaClient() : base()
         {
-            pipeServerStream = new NamedPipeServerStream("elizapipe", PipeDirection.InOut);
-            pipeMessagesServerStream = new NamedPipeServerStream("elizapipemsg", PipeDirection.InOut);
+            int instanceId = new Random().Next(10000);
+
+            pipeServerStream = new NamedPipeServerStream("elizapipe" + instanceId.ToString(), PipeDirection.InOut);
+            pipeMessagesServerStream = new NamedPipeServerStream("elizapipemsg" + instanceId.ToString(), PipeDirection.InOut);
 
             StartInfo.FileName = Program.DebugMode ? "python" : "pythonw";
-            StartInfo.Arguments = Program.ElizaClientScriptPath;
+            StartInfo.Arguments = Program.ElizaClientScriptPath + " " + instanceId.ToString();
             StartInfo.UseShellExecute = Program.DebugMode;
             Start();
 

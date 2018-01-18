@@ -31,15 +31,6 @@ namespace Eliza_Desktop_App
         [STAThread]
         static void Main(string[] args)
         {
-            bool result;
-            var mutex = new System.Threading.Mutex(true, "ElizaUniqueAppId", out result);
-
-            if (!result)
-            {
-                MessageDialogs.Error("Another instance of Eliza is already running.");
-                return;
-            }
-
             debugMode = false;
             elizaClientScriptPath = @".\elizaclient.pyc";
 
