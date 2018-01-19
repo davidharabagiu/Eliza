@@ -20,12 +20,12 @@ def to_base_64(file_path):
 
 
 def add_song_to_db(song_path):
-    song_name = os.path.splitext(os.path.basename(song_path))
+    song_name = os.path.splitext(os.path.basename(song_path))[0]
     mp3_data = to_base_64(song_path)
 
     try:
         connection = mysql.connector.connect(**connection_config)
-        cursor = connection.cursor()
+        cursor = connection.cursor(buffered=True)
         cursor.execute("INSERT INTO songs (song_name, mp3_data) VALUES (%s, %s)", (song_name, mp3_data))
         connection.commit()
         cursor.close()
@@ -38,8 +38,8 @@ def add_song_to_db(song_path):
 
 if __name__ == '__main__':
 
-    if len(sys.argv < 2):
-        print('Usage: {} music_dir/music_file', sys.argv[0])
+    if len(sys.argv) < 2:
+        print('Usage: {} music_dir/music_file'.format(sys.argv[0]))
         exit(0)
 
     song_list = list()
@@ -51,4 +51,5 @@ if __name__ == '__main__':
             song_list.append(os.path.join(sys.argv[1], f))
 
     for song in song_list:
+        print('Adding {}'.format(song))
         add_song_to_db(song)
