@@ -36,6 +36,8 @@ namespace Eliza_Desktop_App
         STATUS_ALREADY_BLOCKED = 23,
         STATUS_USER_NOT_BLOCKED = 24,
         STATUS_INVALID_PASSWORD = 25,
+        STATUS_EMPTY_SONG_NAME = 26,
+        STATUS_INVALID_SONG = 27,
         QUERYRESPONSE_FALSE = 100,
         QUERYRESPONSE_TRUE = 101
     }
@@ -75,6 +77,7 @@ namespace Eliza_Desktop_App
         private Thread inboundMessagesThread;
         private BinaryReader reader;
         private BinaryWriter writer;
+        private WMPLib.WindowsMediaPlayer musicPlayer;
 
         public delegate void MessageReceivedEventHandler(string username, string message);
         public event MessageReceivedEventHandler MessageReceived;
@@ -97,6 +100,10 @@ namespace Eliza_Desktop_App
             reader = new BinaryReader(pipeServerStream);
             writer = new BinaryWriter(pipeServerStream);
 
+            musicPlayer = new WMPLib.WindowsMediaPlayer();
+            musicPlayer.URL = "song.mp3";
+            musicPlayer.controls.stop();
+
             inboundMessagesThread = new Thread(new ThreadStart(ListenToInboundMessages));
             inboundMessagesThread.Start();
         }
@@ -112,6 +119,12 @@ namespace Eliza_Desktop_App
                 {
                     int len = (int)msgReader.ReadUInt32();
                     string data = new string(msgReader.ReadChars(len));
+
+                    if (data.StartsWith("/song"))
+                    {
+                        ReceiveSong(msgReader);
+                        continue;
+                    }
 
                     int separatorIndex = data.IndexOf(':');
                     if (separatorIndex > 0)
@@ -130,6 +143,19 @@ namespace Eliza_Desktop_App
             {
                 // pipeServerStream was closed, do nothing
             }
+        }
+
+        private void ReceiveSong(BinaryReader msgReader)
+        {
+            int len = (int)msgReader.ReadUInt32();
+            int songLength = int.Parse(new string(msgReader.ReadChars(len)));
+            //System.Windows.Forms.MessageBox.Show(songLength.ToString());
+            byte[] songData = ReceiveFile(songLength, msgReader);
+            musicPlayer.controls.stop();
+            string songName = "song" + new Random().Next(10000).ToString() + ".mp3";
+            File.WriteAllBytes(songName, songData);
+            musicPlayer.URL = songName;
+            musicPlayer.controls.play();
         }
 
         private void SendRequest(string request)
@@ -168,10 +194,12 @@ namespace Eliza_Desktop_App
             }
         }
 
-        private byte[] ReceiveFile(int fileLength)
+        private byte[] ReceiveFile(int fileLength, BinaryReader binaryReader)
         {
             try
             {
+                BinaryReader reader = (binaryReader == null) ? this.reader : binaryReader;
+
                 int bytesReceived = 0;
                 int len = 0;
 

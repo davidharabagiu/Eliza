@@ -159,5 +159,38 @@ namespace Eliza_Desktop_App
             clientProcess.MessageReceived -= ClientProcess_MessageReceived;
             chatBoxMutex.Close();
         }
+
+        private void buttonSendSong_Click(object sender, EventArgs e)
+        {
+            ElizaStatus status = clientProcess.SendSong(username, textSongName.Text);
+
+            switch (status)
+            {
+                case ElizaStatus.STATUS_SUCCESS:
+                    textSongName.Clear();
+                    break;
+
+                case ElizaStatus.STATUS_USER_NOT_ONLINE:
+                    MessageDialogs.Error(string.Format("{0} is offline.", username));
+                    break;
+
+                case ElizaStatus.STATUS_SENDER_BLOCKED:
+                    MessageDialogs.Error(string.Format("{0} blocked you.", username));
+                    break;
+
+                case ElizaStatus.STATUS_RECEIVER_BLOCKED:
+                    MessageDialogs.Error(string.Format("You have blocked {0}.", username));
+                    break;
+
+                case ElizaStatus.STATUS_INVALID_SONG:
+                    MessageDialogs.Error("Invalid song name.");
+                    break;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MessageDialogs.Error("Webcam not available.");
+        }
     }
 }

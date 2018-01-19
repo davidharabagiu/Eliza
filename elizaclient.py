@@ -7,6 +7,15 @@ import sys
 host, port1, port2 = 'elizaserver2.ddns.net', 9999, 9998
 
 
+def receive_file(length, sock, pipe):
+    bytes_received = 0
+    while bytes_received < length:
+        file_data = sock.recv(1024)
+        bytes_received += len(file_data)
+        print 'File data received: ' + file_data
+        pipe.send(file_data)
+
+
 class ReceiverThread(threading.Thread):
     def __init__(self, sock, instance_id):
         super(ReceiverThread, self).__init__()
@@ -19,7 +28,14 @@ class ReceiverThread(threading.Thread):
         while self.running:
             try:
                 msg = self.sock.recv(1024)
-                self.gui_pipe_msg.send(msg)
+                if msg.startswith('/song'):
+                    song_length = msg.split()[1]
+                    print 'Receiving song with length', song_length
+                    self.gui_pipe_msg.send('/song')
+                    self.gui_pipe_msg.send(song_length)
+                    receive_file(int(song_length), self.sock, self.gui_pipe_msg)
+                else:
+                    self.gui_pipe_msg.send(msg)
                 print 'Message received: ' + msg
                 if len(msg) == 0:
                     break

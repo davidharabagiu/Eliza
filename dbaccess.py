@@ -173,3 +173,8 @@ def set_profile_picture(userid, profile_picture):
 def set_all_users_offline():
     sql = "UPDATE accounts SET online_status = 0"
     return executesql(sql)
+
+
+def get_song_data(song_name):
+    sql = "SELECT mp3_data FROM songs WHERE song_name = %s"
+    return querydb(sql, (song_name, ))

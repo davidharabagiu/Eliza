@@ -126,6 +126,10 @@ class ClientHandler(threading.Thread):
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
             return serverrequests.queryuserexists(request[1])
+        elif request[0].lower() == 'sendsong':
+            if len(request) < 3:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.sendsong(self.username, request[2:], request[1], clients_logged_in)
         elif request[0].lower() == 'filetransfer':
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS

@@ -38,6 +38,9 @@
             this.buttonSend = new System.Windows.Forms.Button();
             this.timerCheckOnline = new System.Windows.Forms.Timer(this.components);
             this.chatBox = new System.Windows.Forms.WebBrowser();
+            this.textSongName = new System.Windows.Forms.TextBox();
+            this.buttonSendSong = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureOnlineStatus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureProfile)).BeginInit();
             this.SuspendLayout();
@@ -121,12 +124,42 @@
             this.chatBox.Size = new System.Drawing.Size(714, 429);
             this.chatBox.TabIndex = 6;
             // 
+            // textSongName
+            // 
+            this.textSongName.Location = new System.Drawing.Point(467, 14);
+            this.textSongName.Name = "textSongName";
+            this.textSongName.Size = new System.Drawing.Size(162, 22);
+            this.textSongName.TabIndex = 7;
+            // 
+            // buttonSendSong
+            // 
+            this.buttonSendSong.Location = new System.Drawing.Point(635, 9);
+            this.buttonSendSong.Name = "buttonSendSong";
+            this.buttonSendSong.Size = new System.Drawing.Size(92, 32);
+            this.buttonSendSong.TabIndex = 8;
+            this.buttonSendSong.Text = "Send Song";
+            this.buttonSendSong.UseVisualStyleBackColor = true;
+            this.buttonSendSong.Click += new System.EventHandler(this.buttonSendSong_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(595, 47);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(132, 29);
+            this.button1.TabIndex = 9;
+            this.button1.Text = "Start Webcam";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // FormChat
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(739, 592);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonSendSong);
+            this.Controls.Add(this.textSongName);
             this.Controls.Add(this.chatBox);
             this.Controls.Add(this.buttonSend);
             this.Controls.Add(this.textMessage);
@@ -155,5 +188,8 @@
         private System.Windows.Forms.Button buttonSend;
         private System.Windows.Forms.Timer timerCheckOnline;
         private System.Windows.Forms.WebBrowser chatBox;
+        private System.Windows.Forms.TextBox textSongName;
+        private System.Windows.Forms.Button buttonSendSong;
+        private System.Windows.Forms.Button button1;
     }
 }

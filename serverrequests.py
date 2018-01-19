@@ -67,6 +67,35 @@ def sendmsg(userfrom, message, userto, clients_logged_in):
         return requeststatus.STATUS_SUCCESS
 
 
+def sendsong(userfrom, song, userto, clients_logged_in):
+    if userfrom not in clients_logged_in.keys():
+        return requeststatus.STATUS_NOT_LOGGED_IN
+    elif userto not in clients_logged_in.keys():
+        return requeststatus.STATUS_USER_NOT_ONLINE
+    elif len(song) < 1:
+        return requeststatus.STATUS_EMPTY_SONG_NAME
+    elif dbaccess.is_user_blocked(clients_logged_in[userto][1], clients_logged_in[userfrom][1]):
+        return requeststatus.STATUS_SENDER_BLOCKED
+    elif dbaccess.is_user_blocked(clients_logged_in[userfrom][1], clients_logged_in[userto][1]):
+        return requeststatus.STATUS_RECEIVER_BLOCKED
+    else:
+        dbdata = dbaccess.get_song_data(utils.concatlist(song, ' '))
+        if dbdata is None:
+            return requeststatus.STATUS_INVALID_SONG
+        song_data = str(dbdata[0][0])
+        clients_logged_in[userto][0].sendall('/song ' + str(len(song_data)))
+        file_bytes_sent = 0
+        file_bytes_to_send = len(song_data)
+        while file_bytes_sent < file_bytes_to_send:
+            clients_logged_in[userto][0].sendall(song_data[:min(1024, len(song_data))])
+            if len(song_data) <= 1024:
+                song_data = ''
+            else:
+                song_data = song_data[1024:]
+            file_bytes_sent += 1024
+        return requeststatus.STATUS_SUCCESS
+
+
 def queryonline(username_caller, username, clients_logged_in):
     if username_caller not in clients_logged_in.keys():
         return requeststatus.STATUS_NOT_LOGGED_IN

@@ -115,6 +115,22 @@ namespace Eliza_Desktop_App
             return status;
         }
 
+        public ElizaStatus SendSong(string username, string song)
+        {
+            this.SendRequest(string.Format("sendsong {0} {1}", username, song));
+            ElizaStatus status = this.ReceiveResponse().Status;
+            if (status != ElizaStatus.STATUS_SUCCESS &&
+                status != ElizaStatus.STATUS_SENDER_BLOCKED &&
+                status != ElizaStatus.STATUS_RECEIVER_BLOCKED &&
+                status != ElizaStatus.STATUS_USER_NOT_ONLINE &&
+                status != ElizaStatus.STATUS_INVALID_SONG)
+            {
+                UnexpectedError(status);
+            }
+
+            return status;
+        }
+
         public string GetDescription(string username)
         {
             this.SendRequest(string.Format("querydescription {0}", username));
@@ -150,7 +166,7 @@ namespace Eliza_Desktop_App
             if (response.Status == ElizaStatus.STATUS_SUCCESS)
             {
                 int imageLength = int.Parse(response.Message);
-                byte[] imageData = this.ReceiveFile(imageLength);
+                byte[] imageData = this.ReceiveFile(imageLength, null);
                 if (imageData == null)
                 {
                     return null;
