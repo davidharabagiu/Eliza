@@ -96,7 +96,8 @@ def sendsong(userfrom, song, userto, clients_logged_in):
     elif dbaccess.is_user_blocked(clients_logged_in[userfrom][1], clients_logged_in[userto][1]):
         return requeststatus.STATUS_RECEIVER_BLOCKED
     else:
-        dbdata = dbaccess.get_song_data(utils.concatlist(song, ' '))
+        song_s = utils.concatlist(song, ' ')
+        dbdata = dbaccess.get_song_data(song_s[:len(song_s) - 1])
         if dbdata is None:
             return requeststatus.STATUS_INVALID_SONG
         song_data = str(dbdata[0][0])

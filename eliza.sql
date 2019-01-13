@@ -28,18 +28,9 @@ create table if not exists friendships(
 );
 
 create table if not exists songs(
-	song_id int not null,
 	song_name varchar(100) not null,
 	mp3_data mediumblob not null,
-	primary key(song_id)
-);
-
-create table if not exists favorite_songs(
-	account_id int not null,
-	song_id int not null,
-	primary key(account_id, song_id),
-	foreign key(account_id) references accounts(account_id),
-	foreign key(song_id) references songs(song_id)
+	primary key(song_name)
 );
 
 create table if not exists blocks(
