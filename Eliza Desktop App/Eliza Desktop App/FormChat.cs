@@ -69,6 +69,30 @@ namespace Eliza_Desktop_App
                 pictureProfile.Image = profilePicture;
             }
 
+            string messages = clientProcess.GetMessages(myUsername, username);
+            string[] messagesArray = messages.Split(new char[] { '\r', '\n' });
+
+            chatBoxMutex.WaitOne();
+            foreach (string msg in messagesArray)
+            {
+                string[] msgData = msg.Split(new char[] { ' ' });
+                if (msgData.Length < 2)
+                {
+                    continue;
+                }
+
+                string msgContent = "";
+                for (int i = 2; i < msgData.Length; ++i)
+                {
+                    msgContent += msgData[i] + " ";
+                }
+                chatText += string.Format("<font color = \"Blue\"><b>{0}: </b></font>{1}<br>",
+                            msgData[1],
+                            msgContent);
+            }
+            chatBox.DocumentText = chatText;
+            chatBoxMutex.ReleaseMutex();
+
             clientProcess.MessageReceived += ClientProcess_MessageReceived;
         }
 
@@ -103,15 +127,15 @@ namespace Eliza_Desktop_App
 
         private void SendMessage()
         {
-            if (!Online)
+            /*if (!Online)
             {
                 MessageDialogs.Error(string.Format("{0} is offline.", username));
-            }
-            else if (textMessage.Text.Length < 1)
+            }*/
+            if (textMessage.Text.Length < 1)
             {
                 // nothing kek
             }
-            else if (textMessage.Text.Length > 900)
+            else if (textMessage.Text.Length > 100)
             {
                 MessageDialogs.Error(string.Format("The message can't be longer than 900 characters.", username));
             }

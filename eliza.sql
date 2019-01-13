@@ -49,3 +49,15 @@ create table if not exists blocks(
   foreign key(user1) references accounts(account_id),
   foreign key(user2) references accounts(account_id)
 );
+
+create table if not exists messages(
+	id int not null auto_increment,
+    timestamp char(18) not null,
+	user1 int not null,
+    user2 int not null,
+    content varchar (150) not null,
+    primary key(id),
+    foreign key(user1) references accounts(account_id),
+    foreign key(user2) references accounts(account_id)
+);
+    

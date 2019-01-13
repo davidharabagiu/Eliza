@@ -51,20 +51,37 @@ def logout(username, clients_logged_in):
         return requeststatus.STATUS_SUCCESS
 
 
-def sendmsg(userfrom, message, userto, clients_logged_in):
+def sendmsg(userfrom, timestamp, message, userto, clients_logged_in):
+    userto_id = dbaccess.get_user_id(userto)
     if userfrom not in clients_logged_in.keys():
         return requeststatus.STATUS_NOT_LOGGED_IN
-    elif userto not in clients_logged_in.keys():
-        return requeststatus.STATUS_USER_NOT_ONLINE
     elif len(message) < 1:
         return requeststatus.STATUS_ERROR_EMPTY_MESSAGE
-    elif dbaccess.is_user_blocked(clients_logged_in[userto][1], clients_logged_in[userfrom][1]):
+    elif dbaccess.is_user_blocked(userto_id, clients_logged_in[userfrom][1]):
         return requeststatus.STATUS_SENDER_BLOCKED
-    elif dbaccess.is_user_blocked(clients_logged_in[userfrom][1], clients_logged_in[userto][1]):
+    elif dbaccess.is_user_blocked(clients_logged_in[userfrom][1], userto_id):
         return requeststatus.STATUS_RECEIVER_BLOCKED
     else:
-        clients_logged_in[userto][0].sendall(userfrom + ':' + utils.concatlist(message, ' '))
+        userfrom_id = dbaccess.get_user_id(userfrom)
+        userto_id = dbaccess.get_user_id(userto)
+        content = utils.concatlist(message, ' ')
+        dbaccess.insert_message(timestamp, userfrom_id, userto_id, content)
+        if userto in clients_logged_in.keys():
+            clients_logged_in[userto][0].sendall(userfrom + ':' + content)
         return requeststatus.STATUS_SUCCESS
+
+
+def getmessages(username1, username2):
+    userid1 = dbaccess.get_user_id(username1)
+    userid2 = dbaccess.get_user_id(username2)
+    if userid1 >= 0 and userid2 >= 0:
+        messages = dbaccess.get_messages(userid1, userid2)
+        messages_pretty = ""
+        for msg in messages:
+            messages_pretty += msg[0] + " " + msg[1] + " " + msg[2] + "\n"
+        return requeststatus.STATUS_SUCCESS, messages_pretty
+    else:
+        return requeststatus.STATUS_NON_EXISTENT_USER
 
 
 def sendsong(userfrom, song, userto, clients_logged_in):

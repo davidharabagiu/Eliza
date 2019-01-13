@@ -5,7 +5,7 @@ from Crypto.Cipher import XOR
 
 connection_config = {
     'user': 'root',
-    'password': 'oprisa',
+    'password': 'root',
     'host': '127.0.0.1',
     'database': 'eliza',
 }
@@ -54,6 +54,19 @@ def create_user_account(username, password):
     cipher = XOR.new('random')
     password_encrypted = base64.b64encode(cipher.encrypt(password))
     return executesql(sql, (username, password_encrypted))
+
+
+def insert_message(timestamp, user1, user2, content):
+    sql = "INSERT INTO messages (timestamp, user1, user2, content) VALUES (%s, %s, %s, %s)"
+    return executesql(sql, (timestamp, user1, user2, content))
+
+
+def get_messages(user1, user2):
+    sql = ("SELECT m.timestamp, a.user_name, m.content FROM messages m "
+           "JOIN accounts a ON (a.account_id = m.user1) "
+           "WHERE (m.user1 = %s AND m.user2 = %s) OR (m.user1 = %s AND m.user2 = %s) "
+           "ORDER BY m.timestamp")
+    return querydb(sql, (user1, user2, user2, user1))
 
 
 def user_login(username, password):

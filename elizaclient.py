@@ -4,7 +4,7 @@ import guiconnection
 import sys
 
 
-host, port1, port2 = 'elizaserver2.ddns.net', 9999, 9998
+host, port1, port2 = '127.0.0.1', 9999, 9998
 
 
 def receive_file(length, sock, pipe):

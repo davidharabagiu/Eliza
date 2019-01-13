@@ -101,7 +101,8 @@ namespace Eliza_Desktop_App
 
         public ElizaStatus SendMessage(string username, string message)
         {
-            this.SendRequest(string.Format("sendmsg {0} {1}", username, message));
+            string timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmssffff");
+            this.SendRequest(string.Format("sendmsg {0} {1} {2}", timestamp, username, message));
             ElizaStatus status = this.ReceiveResponse().Status;
 
             if (status != ElizaStatus.STATUS_SUCCESS &&
@@ -113,6 +114,17 @@ namespace Eliza_Desktop_App
             }
 
             return status;
+        }
+
+        public string GetMessages(string username1, string username2)
+        {
+            this.SendRequest(string.Format("getmessages {0} {1}", username1, username2));
+            ClientResponse response = this.ReceiveResponse();
+            if (response.Status != ElizaStatus.STATUS_SUCCESS)
+            {
+                UnexpectedError(response.Status);
+            }
+            return response.Message;
         }
 
         public ElizaStatus SendSong(string username, string song)

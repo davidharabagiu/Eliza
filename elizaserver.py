@@ -48,9 +48,13 @@ class ClientHandler(threading.Thread):
                 self.logged_in = False
             return status
         elif request[0].lower() == 'sendmsg':
+            if len(request) < 4:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.sendmsg(self.username, request[1], request[3:], request[2], clients_logged_in)
+        elif request[0].lower() == 'getmessages':
             if len(request) < 3:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
-            return serverrequests.sendmsg(self.username, request[2:], request[1], clients_logged_in)
+            return serverrequests.getmessages(request[1], request[2])
         elif request[0].lower() == 'queryonline':
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
