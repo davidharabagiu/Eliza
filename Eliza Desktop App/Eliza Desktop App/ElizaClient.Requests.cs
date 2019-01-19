@@ -295,5 +295,86 @@ namespace Eliza_Desktop_App
             }
             return friendRequests;
         }
+
+        public List<string> GetRooms()
+        {
+            this.SendRequest("getrooms");
+            ClientResponse response = this.ReceiveResponse();
+            if (response.Status != ElizaStatus.STATUS_SUCCESS)
+            {
+                UnexpectedError(response.Status);
+            }
+            string[] rooms = response.Message.Split(new char[] { '\n' });
+            List<string> roomList = new List<string>();
+            foreach (string s in rooms)
+            {
+                if (s != "")
+                {
+                    roomList.Add(s);
+                }
+            }
+            return roomList;
+        }
+
+        public ElizaStatus CreateRoom(string roomName, bool isPublic)
+        {
+            this.SendRequest(string.Format("createroom {0} {1}", roomName, isPublic ? "1" : "0"));
+            ElizaStatus status = this.ReceiveResponse().Status;
+            return status;
+        }
+
+        public string GetRoomMessages(string roomName)
+        {
+            this.SendRequest(string.Format("getroommessages {0}", roomName));
+            ClientResponse response = this.ReceiveResponse();
+            if (response.Status != ElizaStatus.STATUS_SUCCESS)
+            {
+                UnexpectedError(response.Status);
+            }
+            return response.Message;
+        }
+
+        public ElizaStatus BroadcastMessage(string roomName, string message)
+        {
+            string timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmssffff");
+            this.SendRequest(string.Format("broadcastmsg {0} {1} {2}", timestamp, roomName, message));
+            ElizaStatus status = this.ReceiveResponse().Status;
+
+            if (status != ElizaStatus.STATUS_SUCCESS)
+            {
+                UnexpectedError(status);
+            }
+
+            return status;
+        }
+
+        public Dictionary<string, bool> GetRoomMembers(string roomName)
+        {
+            this.SendRequest(string.Format("getroommembers {0}", roomName));
+            ClientResponse response = this.ReceiveResponse();
+            if (response.Status != ElizaStatus.STATUS_SUCCESS)
+            {
+                UnexpectedError(response.Status);
+            }
+            string[] membersArray = response.Message.Split(new char[] { '\r', '\n' });
+            Dictionary<string, bool> ret = new Dictionary<string, bool>();
+            foreach (string member in membersArray)
+            {
+                string[] memberDetails = member.Split(new char[] { ' ' });
+                if (memberDetails.Length < 2)
+                {
+                    continue;
+                }
+                ret.Add(memberDetails[0], memberDetails[1] == "1");
+            }
+            return ret;
+        }
+
+        public ElizaStatus AddToRoom(string username, string roomName)
+        {
+            this.SendRequest(string.Format("addtoroom {0} {1}", roomName, username));
+            ElizaStatus status = this.ReceiveResponse().Status;
+            return status;
+        }
     }
 }

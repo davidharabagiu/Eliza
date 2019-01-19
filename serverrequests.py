@@ -434,9 +434,11 @@ def addtoroom(username, room_name, member_username, clients_logged_in):
         userid = dbaccess.get_user_id(username)
         roomid = dbaccess.get_room_id(room_name)
         if roomid >= 0:
+            if dbaccess.ismember(userid, roomid):
+                return requeststatus.STATUS_SUCCESS
             ownerid = dbaccess.get_room_owner(room_name)
             private = dbaccess.is_room_private(room_name)
-            if ownerid != userid and private :
+            if ownerid != userid and private:
                 return requeststatus.STATUS_NOT_ALLOWED
             memberid = dbaccess.get_user_id(member_username)
             if memberid < 0:
@@ -484,17 +486,38 @@ def getrooms(username, clients_logged_in):
 def getroommessages(username, room_name, clients_logged_in):
     if username not in clients_logged_in.keys():
         return requeststatus.STATUS_NOT_LOGGED_IN
-    userid = dbaccess.get_user_id(username1)
+    userid = dbaccess.get_user_id(username)
     roomid = dbaccess.get_room_id(room_name)
     if roomid < 0:
         return requeststatus.STATUS_DATABASE_ERROR
-    if dbaccess.ismember(userid, roomid)
+    if dbaccess.ismember(userid, roomid):
         messages = dbaccess.get_room_messages(roomid)
         messages_pretty = ""
         if not (messages is None):
             for msg in messages:
                 messages_pretty += msg[0] + " " + msg[1] + " " + msg[2] + "\n"
         return requeststatus.STATUS_SUCCESS, messages_pretty
+    else:
+        return requeststatus.STATUS_NOT_ALLOWED
+
+
+def getroommembers(username, room_name, clients_logged_in):
+    if username not in clients_logged_in.keys():
+        return requeststatus.STATUS_NOT_LOGGED_IN
+    userid = dbaccess.get_user_id(username)
+    roomid = dbaccess.get_room_id(room_name)
+    if roomid < 0:
+        return requeststatus.STATUS_DATABASE_ERROR
+    if dbaccess.ismember(userid, roomid):
+        members = dbaccess.get_member_names(roomid)
+        members_pretty = ""
+        if not (members is None):
+            for member in members:
+                if member[0] in clients_logged_in.keys():
+                    members_pretty += member[0] + " 1\n"
+                else:
+                    members_pretty += member[0] + " 0\n"
+        return requeststatus.STATUS_SUCCESS, members_pretty
     else:
         return requeststatus.STATUS_NOT_ALLOWED
 
@@ -514,7 +537,9 @@ def broadcastmsg(username, timestamp, message, room_name, clients_logged_in):
         content = utils.concatlist(message, ' ')
         dbaccess.insert_room_message(timestamp, userid, roomid, content)
         members = dbaccess.get_member_names(roomid)
+        print clients_logged_in.keys()
+        print members
         for member in members:
-            if member in clients_logged_in.keys():
-                clients_logged_in[member][0].sendall(username + ':' + content)
+            if member[0] in clients_logged_in.keys() and member[0] != username:
+                clients_logged_in[member[0]][0].sendall(room_name + "#" + username + ':' + content)
         return requeststatus.STATUS_SUCCESS

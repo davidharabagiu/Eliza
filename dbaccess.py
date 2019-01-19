@@ -229,10 +229,19 @@ def is_room_private(room_name):
     sql = "SELECT public FROM chatrooms WHERE name = %s"
     dbdata = querydb(sql, (room_name,))
     if dbdata is None:
-        return False
-    if dbdata[0][0] == 1:
         return True
-    return False
+    if dbdata[0][0] == 1:
+        return False
+    return True
+
+
+def ismember(userid, roomid):
+    sql = "SELECT * FROM chatroom_memberships WHERE user = %s AND chatroom = %s"
+    dbdata = querydb(sql, (userid, roomid))
+    if dbdata is None:
+        return False
+    else:
+        return True
 
 
 def addtoroom(memberid, roomid):
@@ -246,20 +255,27 @@ def kickfromroom(memberid, roomid):
 
 
 def getrooms(userid):
-    sql = ("SELECT chatrooms.name FROM chatrooms JOIN chatroom_memberships ON "
+    sql = ("SELECT DISTINCT chatrooms.name FROM chatrooms JOIN chatroom_memberships ON "
            "(chatrooms.id = chatroom_memberships.chatroom) WHERE "
-           "chatroom_memberships.user = %s OR chatrooms.public = 1)")
+           "chatroom_memberships.user = %s OR chatrooms.public = 1")
     return querydb(sql, (userid,))
 
 
 def get_room_messages(roomid):
     sql = ("SELECT m.timestamp, a.user_name, m.content FROM chatroom_messages m "
            "JOIN accounts a ON (a.account_id = m.user) "
-           "WHERE m.chatroom = %s"
+           "WHERE m.chatroom = %s "
            "ORDER BY m.timestamp")
     return querydb(sql, (roomid,))
 
 
-def insert_message(timestamp, userid, roomid, content):
-    sql = "INSERT INTO messages (timestamp, user, chatroom, content) VALUES (%s, %s, %s, %s)"
+def insert_room_message(timestamp, userid, roomid, content):
+    sql = "INSERT INTO chatroom_messages (timestamp, user, chatroom, content) VALUES (%s, %s, %s, %s)"
     return executesql(sql, (timestamp, userid, roomid, content))
+
+
+def get_member_names(roomid):
+    sql = ("SELECT a.user_name FROM accounts a JOIN chatroom_memberships m ON "
+           "(a.account_id = m.user) JOIN chatrooms c ON (m.chatroom = c.id) "
+           "WHERE c.id = %s")
+    return querydb(sql, (roomid,))

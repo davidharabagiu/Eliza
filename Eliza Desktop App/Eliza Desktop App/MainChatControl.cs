@@ -46,6 +46,7 @@ namespace Eliza_Desktop_App
             }
 
             UpdateFriendList();
+            UpdateRoomList();
             UpdateFriendRequestsMenu();
 
             timerRefresh.Start();
@@ -59,6 +60,16 @@ namespace Eliza_Desktop_App
             {
                 ListViewItem friendItem = new ListViewItem(new string[] { k, friendsList[k] ? "Yes" : "No" });
                 listViewFriends.Items.Add(friendItem);
+            }
+        }
+
+        private void UpdateRoomList()
+        {
+            listBoxRooms.Items.Clear();
+            var roomList = ClientProcess.GetRooms();
+            foreach (string k in roomList)
+            {
+                listBoxRooms.Items.Add(k);
             }
         }
 
@@ -205,6 +216,7 @@ namespace Eliza_Desktop_App
         private void timerRefresh_Tick(object sender, EventArgs e)
         {
             UpdateFriendList();
+            UpdateRoomList();
             UpdateFriendRequestsMenu();
         }
 
@@ -230,6 +242,38 @@ namespace Eliza_Desktop_App
             {
                 FormChat chat = new FormChat();
                 chat.Setup(ClientProcess, userName, dlg.UserName);
+                chat.Show();
+            }
+        }
+
+        private void createRoomToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RoomNameDialog dlg = new RoomNameDialog();
+            if (dlg.ShowDialog() != DialogResult.OK || dlg.RoomName.Length == 0)
+            {
+                return;
+            }
+
+            ElizaStatus status = ClientProcess.CreateRoom(dlg.RoomName, dlg.IsPublic);
+            switch (status)
+            {
+                case ElizaStatus.STATUS_SUCCESS:
+                    MessageDialogs.Info("Room created succesfully.");
+                    UpdateRoomList();
+                    break;
+
+                case ElizaStatus.STATUS_DATABASE_ERROR:
+                    MessageDialogs.Warning("A room with this name already exists.");
+                    break;
+            }
+        }
+
+        private void listBoxRooms_DoubleClick(object sender, EventArgs e)
+        {
+            if (listBoxRooms.SelectedItems.Count > 0)
+            {
+                FormChatRoom chat = new FormChatRoom();
+                chat.Setup(ClientProcess, userName, listBoxRooms.SelectedItem.ToString());
                 chat.Show();
             }
         }

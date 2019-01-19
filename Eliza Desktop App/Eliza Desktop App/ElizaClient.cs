@@ -38,6 +38,7 @@ namespace Eliza_Desktop_App
         STATUS_INVALID_PASSWORD = 25,
         STATUS_EMPTY_SONG_NAME = 26,
         STATUS_INVALID_SONG = 27,
+        STATUS_NOT_ALLOWED = 28,
         QUERYRESPONSE_FALSE = 100,
         QUERYRESPONSE_TRUE = 101
     }
@@ -80,7 +81,9 @@ namespace Eliza_Desktop_App
         private WMPLib.WindowsMediaPlayer musicPlayer;
 
         public delegate void MessageReceivedEventHandler(string username, string message);
+        public delegate void BroadcastMessageReceivedEventHandler(string roomName, string username, string message);
         public event MessageReceivedEventHandler MessageReceived;
+        public event BroadcastMessageReceivedEventHandler BroadcastMessageReceived;
         public delegate void CommunicationErrorEventHandler();
         public event CommunicationErrorEventHandler CommunicationError;
 
@@ -131,7 +134,18 @@ namespace Eliza_Desktop_App
                     {
                         string username = data.Substring(0, separatorIndex);
                         string message = data.Substring(separatorIndex + 1);
-                        MessageReceived(username, message);
+
+                        int roomNameSeparatorIndex = data.IndexOf('#');
+                        if (roomNameSeparatorIndex > 0)
+                        {
+                            string roomName = username.Substring(0, roomNameSeparatorIndex);
+                            username = username.Substring(roomNameSeparatorIndex + 1);
+                            BroadcastMessageReceived(roomName, username, message);
+                        }
+                        else
+                        {
+                            MessageReceived(username, message);
+                        }
                     }
                     else
                     {
