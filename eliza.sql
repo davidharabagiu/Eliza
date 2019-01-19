@@ -41,6 +41,36 @@ create table if not exists blocks(
   foreign key(user2) references accounts(account_id)
 );
 
+create table if not exists chatrooms(
+	id int not null auto_increment,
+    name varchar(30) not null,
+    owner int not null,
+    public bool not null,
+    primary key (id),
+    foreign key (owner) references accounts(account_id)
+);
+
+create table if not exists chatroom_messages(
+	id int not null auto_increment,
+    timestamp char(18) not null,
+	user int not null,
+    chatroom int not null,
+    content varchar (150) not null,
+    replied_to int,
+    primary key(id),
+    foreign key(user) references accounts(account_id),
+    foreign key(chatroom) references chatrooms(id),
+    foreign key(replied_to) references chatroom_messages(id)
+);
+
+create table if not exists chatroom_memberships(
+	user int not null,
+    chatroom int not null,
+    primary key(user, chatroom),
+    foreign key(user) references accounts(account_id),
+    foreign key(chatroom) references chatrooms(id)
+);
+
 create table if not exists messages(
 	id int not null auto_increment,
     timestamp char(18) not null,
@@ -51,4 +81,3 @@ create table if not exists messages(
     foreign key(user1) references accounts(account_id),
     foreign key(user2) references accounts(account_id)
 );
-    

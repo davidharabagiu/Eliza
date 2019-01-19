@@ -134,6 +134,32 @@ class ClientHandler(threading.Thread):
             if len(request) < 3:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
             return serverrequests.sendsong(self.username, request[2:], request[1], clients_logged_in)
+        elif request[0].lower() == 'createroom':
+            if len(request) < 3:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.createroom(self.username, request[1], request[2], clients_logged_in)
+        elif request[0].lower() == 'deleteroom':
+            if len(request) < 2:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.deleteroom(self.username, request[1], clients_logged_in)
+        elif request[0].lower() == 'addtoroom':
+            if len(request) < 3:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.addtoroom(self.username, request[1], request[2], clients_logged_in)
+        elif request[0].lower() == 'kickfromroom':
+            if len(request) < 3:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.kickfromroom(self.username, request[1], request[2], clients_logged_in)
+        elif request[0].lower() == 'broadcastmsg':
+            if len(request) < 4:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.broadcastmsg(self.username, request[1], request[3:], request[2], clients_logged_in)
+        elif request[0].lower() == 'getrooms':
+            return serverrequests.getrooms(self.username, clients_logged_in)
+        elif request[0].lower() == 'getroommessages':
+            if len(request) < 2:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.getroommessages(self.username, request[1], clients_logged_in)
         elif request[0].lower() == 'filetransfer':
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
