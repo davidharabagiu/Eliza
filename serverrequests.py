@@ -405,7 +405,7 @@ def createroom(username, room_name, public, clients_logged_in):
         userid = dbaccess.get_user_id(username)
         roomid = dbaccess.get_room_id(room_name)
         if roomid < 0:
-            dbaccess.createroom(room_name)
+            dbaccess.createroom(userid, room_name, int(public))
             return requeststatus.STATUS_SUCCESS
         else:
             return requeststatus.STATUS_DATABASE_ERROR
@@ -489,7 +489,7 @@ def getroommessages(username, room_name, clients_logged_in):
     if roomid < 0:
         return requeststatus.STATUS_DATABASE_ERROR
     if dbaccess.ismember(userid, roomid)
-        messages = dbaccess.get_room_messages(userid, roomid)
+        messages = dbaccess.get_room_messages(roomid)
         messages_pretty = ""
         if not (messages is None):
             for msg in messages:

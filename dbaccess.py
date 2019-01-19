@@ -191,3 +191,75 @@ def set_all_users_offline():
 def get_song_data(song_name):
     sql = "SELECT mp3_data FROM songs WHERE song_name = %s"
     return querydb(sql, (song_name, ))
+
+
+def get_room_id(room_name):
+    sql = "SELECT id FROM chatrooms WHERE name = %s"
+    dbdata = querydb(sql, (room_name,))
+    if dbdata is None:
+        return -1
+    return dbdata[0][0]
+
+
+def createroom(userid, room_name, public):
+    sql = "INSERT INTO chatrooms (name, owner, public) VALUES (%s, %s, %s)"
+    executesql(sql, (room_name, userid, public))
+    return addtoroom(userid, get_room_id(room_name))
+
+
+def get_room_owner(room_name):
+    sql = "SELECT owner FROM chatrooms WHERE name = %s"
+    dbdata = querydb(sql, (room_name,))
+    if dbdata is None:
+        return -1
+    return dbdata[0][0]
+
+
+def deleteroom(room_name):
+    roomid = get_room_id(room_name)
+    sql = "DELETE FROM chatroom_messages WHERE chatroom = %s"
+    executesql(sql, (roomid,))
+    sql = "DELETE FROM chatroom_memberships WHERE chatroom = %s"
+    executesql(sql, (roomid,))
+    sql = "DELETE FROM chatrooms WHERE name = %s"
+    return executesql(sql, (room_name,))
+
+
+def is_room_private(room_name):
+    sql = "SELECT public FROM chatrooms WHERE name = %s"
+    dbdata = querydb(sql, (room_name,))
+    if dbdata is None:
+        return False
+    if dbdata[0][0] == 1:
+        return True
+    return False
+
+
+def addtoroom(memberid, roomid):
+    sql = "INSERT INTO chatroom_memberships (user, chatroom) VALUES (%s, %s)"
+    return executesql(sql, (memberid, roomid))
+
+
+def kickfromroom(memberid, roomid):
+    sql = "DELETE FROM chatroom_memberships WHERE user = %s AND chatroom = %s"
+    return executesql(sql, (memberid, roomid))
+
+
+def getrooms(userid):
+    sql = ("SELECT chatrooms.name FROM chatrooms JOIN chatroom_memberships ON "
+           "(chatrooms.id = chatroom_memberships.chatroom) WHERE "
+           "chatroom_memberships.user = %s OR chatrooms.public = 1)")
+    return querydb(sql, (userid,))
+
+
+def get_room_messages(roomid):
+    sql = ("SELECT m.timestamp, a.user_name, m.content FROM chatroom_messages m "
+           "JOIN accounts a ON (a.account_id = m.user) "
+           "WHERE m.chatroom = %s"
+           "ORDER BY m.timestamp")
+    return querydb(sql, (roomid,))
+
+
+def insert_message(timestamp, userid, roomid, content):
+    sql = "INSERT INTO messages (timestamp, user, chatroom, content) VALUES (%s, %s, %s, %s)"
+    return executesql(sql, (timestamp, userid, roomid, content))
