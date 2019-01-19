@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Drawing;
 
 namespace Eliza_Desktop_App
 {
@@ -29,6 +28,8 @@ namespace Eliza_Desktop_App
         private string myUsername;
         private ElizaClient clientProcess;
         private Mutex chatBoxMutex;
+        private Dictionary<string, Color> userColors;
+        private static Random rand = new Random();
 
         private string chatText = "<font face = \"Microsoft Sans Serif\" size = \"3\">";
 
@@ -36,6 +37,17 @@ namespace Eliza_Desktop_App
         {
             InitializeComponent();
             chatBoxMutex = new Mutex();
+            userColors = new Dictionary<string, Color>();
+        }
+
+        private string GetColor(string username)
+        {
+            if (userColors.ContainsKey(username))
+            {
+                return ColorTranslator.ToHtml(userColors[username]);
+            }
+            userColors.Add(username, Color.FromArgb(rand.Next(256), rand.Next(256), rand.Next(256)));
+            return ColorTranslator.ToHtml(userColors[username]);
         }
 
         private void FormChat_Load(object sender, EventArgs e)
@@ -60,6 +72,19 @@ namespace Eliza_Desktop_App
 
             CheckUsers();
 
+            bool owner = clientProcess.CheckOwnership(roomName);
+            if (owner)
+            {
+                labelRoomName.Text = "[My] " + labelRoomName.Text;
+                buttonLeave.Visible = false;
+            }
+            else
+            {
+                buttonKick.Visible = false;
+                buttonDelete.Visible = false;
+                button1.Visible = false;
+            }
+
             string messages = clientProcess.GetRoomMessages(roomName);
             string[] messagesArray = messages.Split(new char[] { '\r', '\n' });
 
@@ -77,7 +102,15 @@ namespace Eliza_Desktop_App
                 {
                     msgContent += msgData[i] + " ";
                 }
-                chatText += string.Format("<font color = \"Blue\"><b>{0}: </b></font>{1}<br>",
+                if (msgData[1] == myUsername)
+                {
+                    chatText += "<div  align=\"right\">";
+                }
+                else
+                {
+                    chatText += "<div  align=\"left\">";
+                }
+                chatText += string.Format("<font color = \"" + GetColor(msgData[1]) +"\"><b>{0}: </b></font>{1}<br></div>",
                             msgData[1],
                             msgContent);
             }
@@ -101,7 +134,15 @@ namespace Eliza_Desktop_App
         {
             chatBoxMutex.WaitOne();
 
-            chatText += string.Format("<font color = \"Blue\"><b>{0}: </b></font>{1}<br>",
+            if (username == myUsername)
+            {
+                chatText += "<div  align=\"right\">";
+            }
+            else
+            {
+                chatText += "<div align=\"left\">";
+            }
+            chatText += string.Format("<font color = \"" + GetColor(username) + "\"><b>{0}: </b></font>{1}<br></div>",
                             username,
                             message);
             chatBox.DocumentText = chatText;
@@ -144,6 +185,7 @@ namespace Eliza_Desktop_App
                 else
                 {
                     MessageDialogs.Error("Error " + status.ToString());
+                    Close();
                 }
             }
         }
@@ -187,6 +229,54 @@ namespace Eliza_Desktop_App
             else
             {
                 // The item isn't a MyListBoxItem, do something about it
+            }
+        }
+
+        private void buttonLeave_Click(object sender, EventArgs e)
+        {
+            clientProcess.Kick(myUsername, roomName);
+            Close();
+        }
+
+        private void buttonKick_Click(object sender, EventArgs e)
+        {
+            UserNameDialog dlg = new UserNameDialog();
+            dlg.ShowDialog();
+            if (dlg.UserName.Length > 0 && dlg.UserName != myUsername)
+            {
+                var status = clientProcess.Kick(dlg.UserName, roomName);
+                if (status == ElizaStatus.STATUS_SUCCESS)
+                {
+                    CheckUsers();
+                }
+                else
+                {
+                    MessageDialogs.Error(status.ToString());
+                }
+            }
+        }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            clientProcess.DeleteRoom(roomName);
+            Close();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            UserNameDialog dlg = new UserNameDialog();
+            dlg.ShowDialog();
+            if (dlg.UserName.Length > 0)
+            {
+                var status = clientProcess.AddToRoom(dlg.UserName, roomName);
+                if (status == ElizaStatus.STATUS_SUCCESS)
+                {
+                    CheckUsers();
+                }
+                else
+                {
+                    MessageDialogs.Error(status.ToString());
+                }
             }
         }
     }

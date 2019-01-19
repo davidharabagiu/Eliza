@@ -97,6 +97,10 @@ class ClientHandler(threading.Thread):
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
             return serverrequests.unblockuser(self.username, request[1], clients_logged_in)
+        elif request[0].lower() == 'doiownthis':
+            if len(request) < 2:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.doiownthis(self.username, request[1], clients_logged_in)
         elif request[0].lower() == 'queryblock':
             if len(request) < 3:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS

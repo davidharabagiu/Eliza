@@ -302,7 +302,7 @@ namespace Eliza_Desktop_App
             ClientResponse response = this.ReceiveResponse();
             if (response.Status != ElizaStatus.STATUS_SUCCESS)
             {
-                UnexpectedError(response.Status);
+                MessageDialogs.Error(response.Status.ToString());
             }
             string[] rooms = response.Message.Split(new char[] { '\n' });
             List<string> roomList = new List<string>();
@@ -329,7 +329,7 @@ namespace Eliza_Desktop_App
             ClientResponse response = this.ReceiveResponse();
             if (response.Status != ElizaStatus.STATUS_SUCCESS)
             {
-                UnexpectedError(response.Status);
+                MessageDialogs.Error(response.Status.ToString());
             }
             return response.Message;
         }
@@ -342,7 +342,7 @@ namespace Eliza_Desktop_App
 
             if (status != ElizaStatus.STATUS_SUCCESS)
             {
-                UnexpectedError(status);
+                MessageDialogs.Error(status.ToString());
             }
 
             return status;
@@ -354,7 +354,7 @@ namespace Eliza_Desktop_App
             ClientResponse response = this.ReceiveResponse();
             if (response.Status != ElizaStatus.STATUS_SUCCESS)
             {
-                UnexpectedError(response.Status);
+                MessageDialogs.Error(response.Status.ToString());
             }
             string[] membersArray = response.Message.Split(new char[] { '\r', '\n' });
             Dictionary<string, bool> ret = new Dictionary<string, bool>();
@@ -370,11 +370,48 @@ namespace Eliza_Desktop_App
             return ret;
         }
 
+        public bool CheckOwnership(string roomName)
+        {
+            this.SendRequest(string.Format("doiownthis {0}", roomName));
+            ClientResponse response = this.ReceiveResponse();
+            if (response.Status != ElizaStatus.STATUS_SUCCESS)
+            {
+                MessageDialogs.Error(response.Status.ToString());
+            }
+            if (response.Message.Trim() == "yes")
+            {
+                return true;
+            }
+            return false;
+        }
+
         public ElizaStatus AddToRoom(string username, string roomName)
         {
             this.SendRequest(string.Format("addtoroom {0} {1}", roomName, username));
             ElizaStatus status = this.ReceiveResponse().Status;
             return status;
+        }
+
+        public ElizaStatus Kick(string username, string roomName)
+        {
+            this.SendRequest(string.Format("kickfromroom {0} {1}", roomName, username));
+            ClientResponse response = this.ReceiveResponse();
+            if (response.Status != ElizaStatus.STATUS_SUCCESS)
+            {
+                MessageDialogs.Error(response.Status.ToString());
+            }
+            return response.Status;
+        }
+
+        public ElizaStatus DeleteRoom(string roomName)
+        {
+            this.SendRequest(string.Format("deleteroom {0}", roomName));
+            ClientResponse response = this.ReceiveResponse();
+            if (response.Status != ElizaStatus.STATUS_SUCCESS)
+            {
+                MessageDialogs.Error(response.Status.ToString());
+            }
+            return response.Status;
         }
     }
 }

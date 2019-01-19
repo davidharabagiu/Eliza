@@ -432,15 +432,15 @@ def addtoroom(username, room_name, member_username, clients_logged_in):
         return requeststatus.STATUS_NOT_LOGGED_IN
     else:
         userid = dbaccess.get_user_id(username)
+        memberid = dbaccess.get_user_id(member_username)
         roomid = dbaccess.get_room_id(room_name)
         if roomid >= 0:
-            if dbaccess.ismember(userid, roomid):
+            if dbaccess.ismember(memberid, roomid):
                 return requeststatus.STATUS_SUCCESS
             ownerid = dbaccess.get_room_owner(room_name)
             private = dbaccess.is_room_private(room_name)
             if ownerid != userid and private:
                 return requeststatus.STATUS_NOT_ALLOWED
-            memberid = dbaccess.get_user_id(member_username)
             if memberid < 0:
                 return requeststatus.STATUS_NON_EXISTENT_USER
             dbaccess.addtoroom(memberid, roomid)
@@ -497,6 +497,22 @@ def getroommessages(username, room_name, clients_logged_in):
             for msg in messages:
                 messages_pretty += msg[0] + " " + msg[1] + " " + msg[2] + "\n"
         return requeststatus.STATUS_SUCCESS, messages_pretty
+    else:
+        return requeststatus.STATUS_NOT_ALLOWED
+
+
+def doiownthis(username, room_name, clients_logged_in):
+    if username not in clients_logged_in.keys():
+        return requeststatus.STATUS_NOT_LOGGED_IN
+    userid = dbaccess.get_user_id(username)
+    roomid = dbaccess.get_room_id(room_name)
+    if roomid < 0:
+        return requeststatus.STATUS_DATABASE_ERROR
+    if dbaccess.ismember(userid, roomid):
+        owner = dbaccess.get_room_owner(room_name)
+        if owner == userid:
+            return requeststatus.STATUS_SUCCESS, "yes"
+        return requeststatus.STATUS_SUCCESS, "no"
     else:
         return requeststatus.STATUS_NOT_ALLOWED
 

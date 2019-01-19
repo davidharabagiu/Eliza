@@ -36,6 +36,10 @@
             this.timerCheckOnline = new System.Windows.Forms.Timer(this.components);
             this.chatBox = new System.Windows.Forms.WebBrowser();
             this.listBoxUsers = new System.Windows.Forms.ListBox();
+            this.buttonLeave = new System.Windows.Forms.Button();
+            this.buttonKick = new System.Windows.Forms.Button();
+            this.buttonDelete = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // labelRoomName
@@ -102,12 +106,56 @@
             this.listBoxUsers.TabIndex = 7;
             this.listBoxUsers.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBoxUsers_DrawItem);
             // 
+            // buttonLeave
+            // 
+            this.buttonLeave.Location = new System.Drawing.Point(511, 12);
+            this.buttonLeave.Name = "buttonLeave";
+            this.buttonLeave.Size = new System.Drawing.Size(75, 32);
+            this.buttonLeave.TabIndex = 8;
+            this.buttonLeave.Text = "Leave";
+            this.buttonLeave.UseVisualStyleBackColor = true;
+            this.buttonLeave.Click += new System.EventHandler(this.buttonLeave_Click);
+            // 
+            // buttonKick
+            // 
+            this.buttonKick.Location = new System.Drawing.Point(673, 12);
+            this.buttonKick.Name = "buttonKick";
+            this.buttonKick.Size = new System.Drawing.Size(75, 32);
+            this.buttonKick.TabIndex = 9;
+            this.buttonKick.Text = "Kick User";
+            this.buttonKick.UseVisualStyleBackColor = true;
+            this.buttonKick.Click += new System.EventHandler(this.buttonKick_Click);
+            // 
+            // buttonDelete
+            // 
+            this.buttonDelete.Location = new System.Drawing.Point(754, 12);
+            this.buttonDelete.Name = "buttonDelete";
+            this.buttonDelete.Size = new System.Drawing.Size(89, 32);
+            this.buttonDelete.TabIndex = 10;
+            this.buttonDelete.Text = "Delete Room";
+            this.buttonDelete.UseVisualStyleBackColor = true;
+            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(592, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 32);
+            this.button1.TabIndex = 11;
+            this.button1.Text = "Add User";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // FormChatRoom
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(855, 510);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonDelete);
+            this.Controls.Add(this.buttonKick);
+            this.Controls.Add(this.buttonLeave);
             this.Controls.Add(this.listBoxUsers);
             this.Controls.Add(this.chatBox);
             this.Controls.Add(this.buttonSend);
@@ -131,5 +179,9 @@
         private System.Windows.Forms.Timer timerCheckOnline;
         private System.Windows.Forms.WebBrowser chatBox;
         private System.Windows.Forms.ListBox listBoxUsers;
+        private System.Windows.Forms.Button buttonLeave;
+        private System.Windows.Forms.Button buttonKick;
+        private System.Windows.Forms.Button buttonDelete;
+        private System.Windows.Forms.Button button1;
     }
 }
