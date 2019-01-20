@@ -91,6 +91,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chatBox.Location = new System.Drawing.Point(10, 53);
             this.chatBox.Margin = new System.Windows.Forms.Padding(2);
+            this.chatBox.MaximumSize = new System.Drawing.Size(614, 420);
             this.chatBox.MinimumSize = new System.Drawing.Size(15, 16);
             this.chatBox.Name = "chatBox";
             this.chatBox.Size = new System.Drawing.Size(614, 420);

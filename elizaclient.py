@@ -81,7 +81,7 @@ if __name__ == '__main__':
                     break
                 sock1.sendall(request)
                 print 'Sent: ' + request
-                response = sock1.recv(1024)
+                response = sock1.recv(10240)
                 print 'Received: ' + response
                 gui_pipe.send(response)
                 if request.startswith('queryprofilepic '):

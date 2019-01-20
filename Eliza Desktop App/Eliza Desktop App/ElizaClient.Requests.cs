@@ -334,6 +334,17 @@ namespace Eliza_Desktop_App
             return response.Message;
         }
 
+        public string GetAnnouncements(string roomName)
+        {
+            this.SendRequest(string.Format("getannouncements {0}", roomName));
+            ClientResponse response = this.ReceiveResponse();
+            if (response.Status != ElizaStatus.STATUS_SUCCESS)
+            {
+                MessageDialogs.Error(response.Status.ToString());
+            }
+            return response.Message;
+        }
+
         public string GetReplies(string roomName)
         {
             this.SendRequest(string.Format("getreplies {0}", roomName));
@@ -349,6 +360,20 @@ namespace Eliza_Desktop_App
         {
             string timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmssffff");
             this.SendRequest(string.Format("broadcastmsg {0} {1} {2}", timestamp, roomName, message));
+            ElizaStatus status = this.ReceiveResponse().Status;
+
+            if (status != ElizaStatus.STATUS_SUCCESS)
+            {
+                MessageDialogs.Error(status.ToString());
+            }
+
+            return status;
+        }
+
+        public ElizaStatus BroadcastAnnoucement(string roomName, string message)
+        {
+            string timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmssffff");
+            this.SendRequest(string.Format("broadcastannouncement {0} {1} {2}", timestamp, roomName, message));
             ElizaStatus status = this.ReceiveResponse().Status;
 
             if (status != ElizaStatus.STATUS_SUCCESS)
@@ -398,6 +423,21 @@ namespace Eliza_Desktop_App
         public bool CheckOwnership(string roomName)
         {
             this.SendRequest(string.Format("doiownthis {0}", roomName));
+            ClientResponse response = this.ReceiveResponse();
+            if (response.Status != ElizaStatus.STATUS_SUCCESS)
+            {
+                MessageDialogs.Error(response.Status.ToString());
+            }
+            if (response.Message.Trim() == "yes")
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool CheckMembership(string roomName)
+        {
+            this.SendRequest(string.Format("amimember {0}", roomName));
             ClientResponse response = this.ReceiveResponse();
             if (response.Status != ElizaStatus.STATUS_SUCCESS)
             {

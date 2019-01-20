@@ -535,6 +535,19 @@ def doiownthis(username, room_name, clients_logged_in):
         return requeststatus.STATUS_NOT_ALLOWED
 
 
+def amimember(username, room_name, clients_logged_in):
+    if username not in clients_logged_in.keys():
+        return requeststatus.STATUS_NOT_LOGGED_IN
+    userid = dbaccess.get_user_id(username)
+    roomid = dbaccess.get_room_id(room_name)
+    if roomid < 0:
+        return requeststatus.STATUS_DATABASE_ERROR
+    if dbaccess.ismember(userid, roomid):
+        return requeststatus.STATUS_SUCCESS, "yes"
+    else:
+        return requeststatus.STATUS_SUCCESS, "no"
+
+
 def getroommembers(username, room_name, clients_logged_in):
     if username not in clients_logged_in.keys():
         return requeststatus.STATUS_NOT_LOGGED_IN
@@ -617,3 +630,42 @@ def broadcastreply(username, timestamp, message, room_name, replied_to, clients_
             if member[0] in clients_logged_in.keys():
                 clients_logged_in[member[0]][0].sendall(replied_to + "/" + str(msgid) + "#" + timestamp + "#" + room_name + "#" + username + ':' + content)
         return requeststatus.STATUS_SUCCESS
+
+
+def broadcastannouncement(username, timestamp, message, room_name, clients_logged_in):
+    userid = dbaccess.get_user_id(username)
+    roomid = dbaccess.get_room_id(room_name)
+    if username not in clients_logged_in.keys():
+        return requeststatus.STATUS_NOT_LOGGED_IN
+    elif len(message) < 1:
+        return requeststatus.STATUS_ERROR_EMPTY_MESSAGE
+    elif roomid < 0:
+        return requeststatus.STATUS_DATABASE_ERROR
+    elif not dbaccess.ismember(userid, roomid):
+        return requeststatus.STATUS_NOT_ALLOWED
+    else:
+        content = utils.concatlist(message, ' ')
+        dbaccess.insert_announcement(timestamp, roomid, content)
+        members = dbaccess.get_member_names(roomid)
+        for member in members:
+            if member[0] in clients_logged_in.keys():
+                clients_logged_in[member[0]][0].sendall("*" + timestamp + "#" + room_name + ':' + content)
+        return requeststatus.STATUS_SUCCESS
+
+
+def getannouncements(username, room_name, clients_logged_in):
+    if username not in clients_logged_in.keys():
+        return requeststatus.STATUS_NOT_LOGGED_IN
+    userid = dbaccess.get_user_id(username)
+    roomid = dbaccess.get_room_id(room_name)
+    if roomid < 0:
+        return requeststatus.STATUS_DATABASE_ERROR
+    if dbaccess.ismember(userid, roomid):
+        messages = dbaccess.get_announcements(roomid)
+        messages_pretty = ""
+        if not (messages is None):
+            for msg in messages:
+                messages_pretty += msg[0] + " " + msg[1] + "\n"
+        return requeststatus.STATUS_SUCCESS, messages_pretty
+    else:
+        return requeststatus.STATUS_NOT_ALLOWED

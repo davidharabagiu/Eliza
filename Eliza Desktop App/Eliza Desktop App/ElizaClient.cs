@@ -83,9 +83,11 @@ namespace Eliza_Desktop_App
         public delegate void MessageReceivedEventHandler(string username, string message);
         public delegate void BroadcastMessageReceivedEventHandler(int id, string timestamp, string roomName, string username, string message);
         public delegate void ReplyReceivedEventHandler(int replyid, int msgid, string timestamp, string roomName, string username, string message);
+        public delegate void AnnouncementReceivedEventHandler(string timestamp, string roomName, string message);
         public event MessageReceivedEventHandler MessageReceived;
         public event BroadcastMessageReceivedEventHandler BroadcastMessageReceived;
         public event ReplyReceivedEventHandler ReplyReceived;
+        public event AnnouncementReceivedEventHandler AnnouncementReceived;
         public delegate void CommunicationErrorEventHandler();
         public event CommunicationErrorEventHandler CommunicationError;
 
@@ -136,6 +138,13 @@ namespace Eliza_Desktop_App
                     {
                         string username = data.Substring(0, separatorIndex);
                         string message = data.Substring(separatorIndex + 1);
+
+                        if (username[0] == '*')
+                        {
+                            string[] anndata = username.Substring(1).Split(new char[] { '#' });
+                            AnnouncementReceived(anndata[0], anndata[1], message);
+                            continue;
+                        }
 
                         string[] msgdata = username.Split(new char[] { '#' });
                         if (msgdata.Length >= 4)

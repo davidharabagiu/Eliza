@@ -63,6 +63,15 @@ create table if not exists chatroom_messages(
     foreign key(replied_to) references chatroom_messages(id)
 );
 
+create table if not exists announcements(
+	id int not null auto_increment,
+    timestamp char(18) not null,
+    chatroom int not null,
+    content varchar (150) not null,
+    primary key(id),
+    foreign key(chatroom) references chatrooms(id)
+);
+
 create table if not exists chatroom_memberships(
 	user int not null,
     chatroom int not null,

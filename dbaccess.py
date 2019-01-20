@@ -221,6 +221,8 @@ def deleteroom(room_name):
     executesql(sql, (roomid,))
     sql = "DELETE FROM chatroom_memberships WHERE chatroom = %s"
     executesql(sql, (roomid,))
+    sql = "DELETE FROM announcements WHERE chatroom = %s"
+    executesql(sql, (roomid,))
     sql = "DELETE FROM chatrooms WHERE name = %s"
     return executesql(sql, (room_name,))
 
@@ -311,3 +313,15 @@ def room_message_exists(roomid, messageid):
         return False
     else:
         return True
+
+
+def insert_announcement(timestamp, roomid, content):
+    sql = "INSERT INTO announcements (timestamp, chatroom, content) VALUES (%s, %s, %s)"
+    return executesql(sql, (timestamp, roomid, content))
+
+
+def get_announcements(roomid):
+    sql = ("SELECT timestamp, content FROM announcements "
+           "WHERE chatroom = %s "
+           "ORDER BY timestamp")
+    return querydb(sql, (roomid,))

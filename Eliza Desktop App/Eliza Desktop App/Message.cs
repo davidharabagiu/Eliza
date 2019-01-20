@@ -8,6 +8,7 @@ namespace Eliza_Desktop_App
 {
     class Message
     {
+        public bool IsAnnouncement;
         public int Id;
         public string Timestamp;
         public string Username;
@@ -19,6 +20,16 @@ namespace Eliza_Desktop_App
             Timestamp = timestamp;
             Username = username;
             Content = content;
+            IsAnnouncement = false;
+        }
+
+        public Message(string timestamp, string content)
+        {
+            Id = -1;
+            Timestamp = timestamp;
+            Username = null;
+            Content = content;
+            IsAnnouncement = true;
         }
     }
 }

@@ -101,6 +101,10 @@ class ClientHandler(threading.Thread):
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
             return serverrequests.doiownthis(self.username, request[1], clients_logged_in)
+        elif request[0].lower() == 'amimember':
+            if len(request) < 2:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.amimember(self.username, request[1], clients_logged_in)
         elif request[0].lower() == 'queryblock':
             if len(request) < 3:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
@@ -180,6 +184,14 @@ class ClientHandler(threading.Thread):
             if len(request) < 5:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
             return serverrequests.broadcastreply(self.username, request[1], request[4:], request[2], request[3], clients_logged_in)
+        elif request[0].lower() == 'broadcastannouncement':
+            if len(request) < 4:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.broadcastannouncement(self.username, request[1], request[3:], request[2], clients_logged_in)
+        elif request[0].lower() == 'getannouncements':
+            if len(request) < 2:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.getannouncements(self.username, request[1], clients_logged_in)
         elif request[0].lower() == 'filetransfer':
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
@@ -227,6 +239,7 @@ class ClientHandler(threading.Thread):
                     response = (response[0], response[1])
                 if type(response) is tuple:
                     response = utils.concatlist(response, '\n')
+                    print response
                 else:
                     response = str(response)
                 self.client.sendall(response)
