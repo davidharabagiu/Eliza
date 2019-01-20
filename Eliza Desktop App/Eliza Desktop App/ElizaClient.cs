@@ -81,7 +81,7 @@ namespace Eliza_Desktop_App
         private WMPLib.WindowsMediaPlayer musicPlayer;
 
         public delegate void MessageReceivedEventHandler(string username, string message);
-        public delegate void BroadcastMessageReceivedEventHandler(string roomName, string username, string message);
+        public delegate void BroadcastMessageReceivedEventHandler(int id, string timestamp, string roomName, string username, string message);
         public event MessageReceivedEventHandler MessageReceived;
         public event BroadcastMessageReceivedEventHandler BroadcastMessageReceived;
         public delegate void CommunicationErrorEventHandler();
@@ -135,12 +135,14 @@ namespace Eliza_Desktop_App
                         string username = data.Substring(0, separatorIndex);
                         string message = data.Substring(separatorIndex + 1);
 
-                        int roomNameSeparatorIndex = data.IndexOf('#');
-                        if (roomNameSeparatorIndex > 0)
+                        string[] msgdata = username.Split(new char[] { '#' });
+                        if (msgdata.Length >= 4)
                         {
-                            string roomName = username.Substring(0, roomNameSeparatorIndex);
-                            username = username.Substring(roomNameSeparatorIndex + 1);
-                            BroadcastMessageReceived(roomName, username, message);
+                            int msgid = Convert.ToInt32(msgdata[0]);
+                            string timestamp = msgdata[1];
+                            string roomName = msgdata[2];
+                            username = msgdata[3];
+                            BroadcastMessageReceived(msgid, timestamp, roomName, username, message);
                         }
                         else
                         {

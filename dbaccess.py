@@ -262,7 +262,7 @@ def getrooms(userid):
 
 
 def get_room_messages(roomid):
-    sql = ("SELECT m.timestamp, a.user_name, m.content FROM chatroom_messages m "
+    sql = ("SELECT m.id, m.timestamp, a.user_name, m.content FROM chatroom_messages m "
            "JOIN accounts a ON (a.account_id = m.user) "
            "WHERE m.chatroom = %s "
            "ORDER BY m.timestamp")
@@ -279,3 +279,13 @@ def get_member_names(roomid):
            "(a.account_id = m.user) JOIN chatrooms c ON (m.chatroom = c.id) "
            "WHERE c.id = %s")
     return querydb(sql, (roomid,))
+
+
+def set_room_owner(roomid, ownerid):
+    sql = "UPDATE chatrooms SET owner = %s WHERE id = %s"
+    return executesql(sql, (ownerid, roomid))
+
+
+def last_room_message_id(roomid):
+    sql = "SELECT MAX(id) FROM chatroom_messages WHERE chatroom = %s"
+    return querydb(sql, (roomid,))[0][0]

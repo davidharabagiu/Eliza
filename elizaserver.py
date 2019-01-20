@@ -168,6 +168,10 @@ class ClientHandler(threading.Thread):
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
             return serverrequests.getroommembers(self.username, request[1], clients_logged_in)
+        elif request[0].lower() == 'transferroomownership':
+            if len(request) < 2:
+                return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS
+            return serverrequests.transferroomownership(self.username, request[1], request[2], clients_logged_in)
         elif request[0].lower() == 'filetransfer':
             if len(request) < 2:
                 return requeststatus.STATUS_INVALID_REQUEST_PARAMETERS

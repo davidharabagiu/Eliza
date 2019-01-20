@@ -30,6 +30,8 @@ namespace Eliza_Desktop_App
         private Mutex chatBoxMutex;
         private Dictionary<string, Color> userColors;
         private static Random rand = new Random();
+        private bool owner;
+        private SortedList<string, Message> messagesList;
 
         private string chatText = "<font face = \"Microsoft Sans Serif\" size = \"3\">";
 
@@ -38,6 +40,7 @@ namespace Eliza_Desktop_App
             InitializeComponent();
             chatBoxMutex = new Mutex();
             userColors = new Dictionary<string, Color>();
+            messagesList = new SortedList<string, Message>();
         }
 
         private string GetColor(string username)
@@ -72,11 +75,10 @@ namespace Eliza_Desktop_App
 
             CheckUsers();
 
-            bool owner = clientProcess.CheckOwnership(roomName);
+            owner = clientProcess.CheckOwnership(roomName);
             if (owner)
             {
                 labelRoomName.Text = "[My] " + labelRoomName.Text;
-                buttonLeave.Visible = false;
             }
             else
             {
@@ -88,34 +90,25 @@ namespace Eliza_Desktop_App
             string messages = clientProcess.GetRoomMessages(roomName);
             string[] messagesArray = messages.Split(new char[] { '\r', '\n' });
 
-            chatBoxMutex.WaitOne();
             foreach (string msg in messagesArray)
             {
                 string[] msgData = msg.Split(new char[] { ' ' });
-                if (msgData.Length < 2)
+                if (msgData.Length < 4)
                 {
                     continue;
                 }
 
                 string msgContent = "";
-                for (int i = 2; i < msgData.Length; ++i)
+                for (int i = 3; i < msgData.Length; ++i)
                 {
                     msgContent += msgData[i] + " ";
                 }
-                if (msgData[1] == myUsername)
-                {
-                    chatText += "<div  align=\"right\">";
-                }
-                else
-                {
-                    chatText += "<div  align=\"left\">";
-                }
-                chatText += string.Format("<font color = \"" + GetColor(msgData[1]) +"\"><b>{0}: </b></font>{1}<br></div>",
-                            msgData[1],
-                            msgContent);
+
+                Message msgObj = new Message(Convert.ToInt32(msgData[0]), msgData[1], msgData[2], msgContent);
+                messagesList.Add(msgObj.Timestamp, msgObj);
             }
-            chatBox.DocumentText = chatText;
-            chatBoxMutex.ReleaseMutex();
+
+            DisplayMessages();
 
             clientProcess.BroadcastMessageReceived += ClientProcess_MessageReceived;
         }
@@ -130,31 +123,37 @@ namespace Eliza_Desktop_App
             }
         }
 
-        private void DisplayMessage(string username, string message)
+        private void DisplayMessages()
         {
-            chatBoxMutex.WaitOne();
+            chatText = "<font face = \"Microsoft Sans Serif\" size = \"3\">";
 
-            if (username == myUsername)
+            foreach (Message msg in messagesList.Values)
             {
-                chatText += "<div  align=\"right\">";
+                if (msg.Username == myUsername)
+                {
+                    chatText += "<div align=\"right\">";
+                }
+                else
+                {
+                    chatText += "<div align=\"left\">";
+                }
+                chatText += string.Format("<font color = \"" + GetColor(msg.Username) + "\"><b>{0}: </b></font>{1}<br></div>",
+                                msg.Username,
+                                msg.Content);
             }
-            else
-            {
-                chatText += "<div align=\"left\">";
-            }
-            chatText += string.Format("<font color = \"" + GetColor(username) + "\"><b>{0}: </b></font>{1}<br></div>",
-                            username,
-                            message);
+
+            chatText += "</font>";
             chatBox.DocumentText = chatText;
-
-            chatBoxMutex.ReleaseMutex();
         }
 
-        private void ClientProcess_MessageReceived(string roomName, string username, string message)
+        private void ClientProcess_MessageReceived(int id, string timestamp, string roomName, string username, string message)
         {
             if (this.roomName == roomName)
             {
-                DisplayMessage(username, message);
+                chatBoxMutex.WaitOne();
+                messagesList.Add(timestamp, new Message(id, timestamp, username, message));
+                DisplayMessages();
+                chatBoxMutex.ReleaseMutex();
             }
         }
 
@@ -179,7 +178,7 @@ namespace Eliza_Desktop_App
 
                 if (status == ElizaStatus.STATUS_SUCCESS)
                 {
-                    DisplayMessage(myUsername, textMessage.Text);
+                    // DisplayMessage(myUsername, textMessage.Text);
                     textMessage.Clear();
                 }
                 else
@@ -234,6 +233,24 @@ namespace Eliza_Desktop_App
 
         private void buttonLeave_Click(object sender, EventArgs e)
         {
+            if (owner)
+            {
+                UserNameDialog dlg = new UserNameDialog();
+                dlg.ShowDialog();
+                if (dlg.UserName != null && dlg.UserName.Length > 0)
+                {
+                    ElizaStatus status = clientProcess.TransferOwnership(roomName, dlg.UserName);
+                    if (status != ElizaStatus.STATUS_SUCCESS)
+                    {
+                        MessageDialogs.Error(status.ToString());
+                        return;
+                    }
+                }
+                else
+                {
+                    return;
+                }   
+            }
             clientProcess.Kick(myUsername, roomName);
             Close();
         }

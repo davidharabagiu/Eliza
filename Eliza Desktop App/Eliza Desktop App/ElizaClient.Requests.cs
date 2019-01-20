@@ -413,5 +413,12 @@ namespace Eliza_Desktop_App
             }
             return response.Status;
         }
+
+        public ElizaStatus TransferOwnership(string roomName, string newOwner)
+        {
+            this.SendRequest(string.Format("transferroomownership {0} {1}", roomName, newOwner));
+            ClientResponse response = this.ReceiveResponse();
+            return response.Status;
+        }
     }
 }

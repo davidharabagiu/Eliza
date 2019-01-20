@@ -495,7 +495,7 @@ def getroommessages(username, room_name, clients_logged_in):
         messages_pretty = ""
         if not (messages is None):
             for msg in messages:
-                messages_pretty += msg[0] + " " + msg[1] + " " + msg[2] + "\n"
+                messages_pretty += str(msg[0]) + " " + msg[1] + " " + msg[2] + " " + msg[3] + "\n"
         return requeststatus.STATUS_SUCCESS, messages_pretty
     else:
         return requeststatus.STATUS_NOT_ALLOWED
@@ -538,6 +538,23 @@ def getroommembers(username, room_name, clients_logged_in):
         return requeststatus.STATUS_NOT_ALLOWED
 
 
+def transferroomownership(username, room_name, new_owner, clients_logged_in):
+    if username not in clients_logged_in.keys():
+        return requeststatus.STATUS_NOT_LOGGED_IN
+    userid = dbaccess.get_user_id(username)
+    roomid = dbaccess.get_room_id(room_name)
+    if roomid < 0:
+        return requeststatus.STATUS_DATABASE_ERROR
+    new_owner_id = dbaccess.get_user_id(new_owner)
+    if new_owner_id < 0:
+        return requeststatus.STATUS_DATABASE_ERROR
+    ownerid = dbaccess.get_room_owner(room_name)
+    if ownerid != userid:
+        return requeststatus.STATUS_NOT_ALLOWED
+    dbaccess.set_room_owner(roomid, new_owner_id)
+    return requeststatus.STATUS_SUCCESS
+
+
 def broadcastmsg(username, timestamp, message, room_name, clients_logged_in):
     userid = dbaccess.get_user_id(username)
     roomid = dbaccess.get_room_id(room_name)
@@ -552,10 +569,9 @@ def broadcastmsg(username, timestamp, message, room_name, clients_logged_in):
     else:
         content = utils.concatlist(message, ' ')
         dbaccess.insert_room_message(timestamp, userid, roomid, content)
+        msgid = dbaccess.last_room_message_id(roomid)
         members = dbaccess.get_member_names(roomid)
-        print clients_logged_in.keys()
-        print members
         for member in members:
-            if member[0] in clients_logged_in.keys() and member[0] != username:
-                clients_logged_in[member[0]][0].sendall(room_name + "#" + username + ':' + content)
+            if member[0] in clients_logged_in.keys(): #and member[0] != username
+                clients_logged_in[member[0]][0].sendall(str(msgid) + "#" + timestamp + "#" + room_name + "#" + username + ':' + content)
         return requeststatus.STATUS_SUCCESS
