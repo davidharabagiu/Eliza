@@ -264,7 +264,15 @@ def getrooms(userid):
 def get_room_messages(roomid):
     sql = ("SELECT m.id, m.timestamp, a.user_name, m.content FROM chatroom_messages m "
            "JOIN accounts a ON (a.account_id = m.user) "
-           "WHERE m.chatroom = %s "
+           "WHERE m.chatroom = %s AND m.replied_to IS NULL "
+           "ORDER BY m.timestamp")
+    return querydb(sql, (roomid,))
+
+
+def get_replies(roomid):
+    sql = ("SELECT m.replied_to, m.id, m.timestamp, a.user_name, m.content FROM chatroom_messages m "
+           "JOIN accounts a ON (a.account_id = m.user) "
+           "WHERE m.chatroom = %s AND !(m.replied_to IS NULL) "
            "ORDER BY m.timestamp")
     return querydb(sql, (roomid,))
 
@@ -272,6 +280,11 @@ def get_room_messages(roomid):
 def insert_room_message(timestamp, userid, roomid, content):
     sql = "INSERT INTO chatroom_messages (timestamp, user, chatroom, content) VALUES (%s, %s, %s, %s)"
     return executesql(sql, (timestamp, userid, roomid, content))
+
+
+def insert_reply(timestamp, userid, roomid, content, replied_to):
+    sql = "INSERT INTO chatroom_messages (timestamp, user, chatroom, content, replied_to) VALUES (%s, %s, %s, %s, %s)"
+    return executesql(sql, (timestamp, userid, roomid, content, replied_to))
 
 
 def get_member_names(roomid):
@@ -289,3 +302,12 @@ def set_room_owner(roomid, ownerid):
 def last_room_message_id(roomid):
     sql = "SELECT MAX(id) FROM chatroom_messages WHERE chatroom = %s"
     return querydb(sql, (roomid,))[0][0]
+
+
+def room_message_exists(roomid, messageid):
+    sql = "SELECT * FROM chatroom_messages WHERE id = %s AND chatroom = %s AND replied_to IS NULL"
+    dbdata = querydb(sql, (messageid, roomid))
+    if dbdata is None:
+        return False
+    else:
+        return True

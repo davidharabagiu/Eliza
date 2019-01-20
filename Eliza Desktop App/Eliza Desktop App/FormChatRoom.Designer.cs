@@ -40,6 +40,7 @@
             this.buttonKick = new System.Windows.Forms.Button();
             this.buttonDelete = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.textBoxReplyTo = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // labelRoomName
@@ -58,10 +59,10 @@
             this.textMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textMessage.Location = new System.Drawing.Point(10, 478);
+            this.textMessage.Location = new System.Drawing.Point(49, 478);
             this.textMessage.Margin = new System.Windows.Forms.Padding(2);
             this.textMessage.Name = "textMessage";
-            this.textMessage.Size = new System.Drawing.Size(796, 23);
+            this.textMessage.Size = new System.Drawing.Size(757, 23);
             this.textMessage.TabIndex = 0;
             this.textMessage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textMessage_KeyDown);
             // 
@@ -94,6 +95,7 @@
             this.chatBox.Name = "chatBox";
             this.chatBox.Size = new System.Drawing.Size(614, 420);
             this.chatBox.TabIndex = 6;
+            this.chatBox.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.chatBox_DocumentCompleted);
             // 
             // listBoxUsers
             // 
@@ -146,12 +148,24 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // textBoxReplyTo
+            // 
+            this.textBoxReplyTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxReplyTo.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxReplyTo.Location = new System.Drawing.Point(10, 478);
+            this.textBoxReplyTo.Margin = new System.Windows.Forms.Padding(2);
+            this.textBoxReplyTo.Name = "textBoxReplyTo";
+            this.textBoxReplyTo.Size = new System.Drawing.Size(35, 23);
+            this.textBoxReplyTo.TabIndex = 12;
+            // 
             // FormChatRoom
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(855, 510);
+            this.Controls.Add(this.textBoxReplyTo);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.buttonDelete);
             this.Controls.Add(this.buttonKick);
@@ -183,5 +197,6 @@
         private System.Windows.Forms.Button buttonKick;
         private System.Windows.Forms.Button buttonDelete;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox textBoxReplyTo;
     }
 }

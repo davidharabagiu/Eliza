@@ -32,6 +32,7 @@ namespace Eliza_Desktop_App
         private static Random rand = new Random();
         private bool owner;
         private SortedList<string, Message> messagesList;
+        private Dictionary<int, SortedList<string, Message>> repliesList;
 
         private string chatText = "<font face = \"Microsoft Sans Serif\" size = \"3\">";
 
@@ -41,6 +42,7 @@ namespace Eliza_Desktop_App
             chatBoxMutex = new Mutex();
             userColors = new Dictionary<string, Color>();
             messagesList = new SortedList<string, Message>();
+            repliesList = new Dictionary<int, SortedList<string, Message>>();
         }
 
         private string GetColor(string username)
@@ -108,9 +110,36 @@ namespace Eliza_Desktop_App
                 messagesList.Add(msgObj.Timestamp, msgObj);
             }
 
+            messages = clientProcess.GetReplies(roomName);
+            messagesArray = messages.Split(new char[] { '\r', '\n' });
+
+            foreach (string msg in messagesArray)
+            {
+                string[] msgData = msg.Split(new char[] { ' ' });
+                if (msgData.Length < 5)
+                {
+                    continue;
+                }
+
+                string msgContent = "";
+                for (int i = 4; i < msgData.Length; ++i)
+                {
+                    msgContent += msgData[i] + " ";
+                }
+
+                Message msgObj = new Message(Convert.ToInt32(msgData[1]), msgData[2], msgData[3], msgContent);
+                int repliedTo = Convert.ToInt32(msgData[0]);
+                if (!repliesList.ContainsKey(repliedTo))
+                {
+                    repliesList.Add(repliedTo, new SortedList<string, Message>());
+                }
+                repliesList[repliedTo].Add(msgObj.Timestamp, msgObj);
+            }
+
             DisplayMessages();
 
             clientProcess.BroadcastMessageReceived += ClientProcess_MessageReceived;
+            clientProcess.ReplyReceived += ClientProcess_ReplyReceived;
         }
 
         private void CheckUsers()
@@ -137,9 +166,22 @@ namespace Eliza_Desktop_App
                 {
                     chatText += "<div align=\"left\">";
                 }
-                chatText += string.Format("<font color = \"" + GetColor(msg.Username) + "\"><b>{0}: </b></font>{1}<br></div>",
+                chatText += string.Format("<font color=\"#a0a0a0\" size=\"1\">{0}</font><font color = \"" + GetColor(msg.Username) + "\"><b> {1}: </b></font>{2}<br><font color=\"#a0a0a0\" size=\"1\">{3}</font><br>",
+                                msg.Id,
                                 msg.Username,
-                                msg.Content);
+                                msg.Content,
+                                msg.Timestamp);
+                if (repliesList.ContainsKey(msg.Id))
+                {
+                    foreach (Message reply in repliesList[msg.Id].Values)
+                    {
+                        chatText += string.Format("<font size = \"2\"><font color = \"" + GetColor(reply.Username) + "\"><b>{0}: </b></font>{1}</font><br><font color=\"#a0a0a0\" size=\"1\">{2}</font><br>",
+                                    reply.Username,
+                                    reply.Content,
+                                    reply.Timestamp);
+                    }
+                }
+                chatText += "</div>";
             }
 
             chatText += "</font>";
@@ -152,6 +194,23 @@ namespace Eliza_Desktop_App
             {
                 chatBoxMutex.WaitOne();
                 messagesList.Add(timestamp, new Message(id, timestamp, username, message));
+                DisplayMessages();
+                chatBoxMutex.ReleaseMutex();
+            }
+        }
+
+        private void ClientProcess_ReplyReceived(int replyid, int id, string timestamp, string roomName, string username, string message)
+        {
+            if (this.roomName == roomName)
+            {
+                chatBoxMutex.WaitOne();
+
+                if (!repliesList.ContainsKey(replyid))
+                {
+                    repliesList.Add(replyid, new SortedList<string, Message>());
+                }
+                repliesList[replyid].Add(timestamp, new Message(id, timestamp, username, message));
+
                 DisplayMessages();
                 chatBoxMutex.ReleaseMutex();
             }
@@ -174,11 +233,19 @@ namespace Eliza_Desktop_App
             }
             else
             {
-                ElizaStatus status = clientProcess.BroadcastMessage(roomName, textMessage.Text);
+                ElizaStatus status = ElizaStatus.STATUS_SUCCESS;
+
+                if (textBoxReplyTo.Text.Length > 0)
+                {
+                    status = clientProcess.BroadcastReply(roomName, textMessage.Text, textBoxReplyTo.Text);
+                }
+                else
+                {
+                    status = clientProcess.BroadcastMessage(roomName, textMessage.Text);
+                }
 
                 if (status == ElizaStatus.STATUS_SUCCESS)
                 {
-                    // DisplayMessage(myUsername, textMessage.Text);
                     textMessage.Clear();
                 }
                 else
@@ -295,6 +362,11 @@ namespace Eliza_Desktop_App
                     MessageDialogs.Error(status.ToString());
                 }
             }
+        }
+
+        private void chatBox_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            chatBox.Document.Window.ScrollTo(0, chatBox.Document.Window.Size.Height);
         }
     }
 }

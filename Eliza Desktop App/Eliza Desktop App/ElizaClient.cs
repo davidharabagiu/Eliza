@@ -82,8 +82,10 @@ namespace Eliza_Desktop_App
 
         public delegate void MessageReceivedEventHandler(string username, string message);
         public delegate void BroadcastMessageReceivedEventHandler(int id, string timestamp, string roomName, string username, string message);
+        public delegate void ReplyReceivedEventHandler(int replyid, int msgid, string timestamp, string roomName, string username, string message);
         public event MessageReceivedEventHandler MessageReceived;
         public event BroadcastMessageReceivedEventHandler BroadcastMessageReceived;
+        public event ReplyReceivedEventHandler ReplyReceived;
         public delegate void CommunicationErrorEventHandler();
         public event CommunicationErrorEventHandler CommunicationError;
 
@@ -138,11 +140,23 @@ namespace Eliza_Desktop_App
                         string[] msgdata = username.Split(new char[] { '#' });
                         if (msgdata.Length >= 4)
                         {
-                            int msgid = Convert.ToInt32(msgdata[0]);
                             string timestamp = msgdata[1];
                             string roomName = msgdata[2];
                             username = msgdata[3];
-                            BroadcastMessageReceived(msgid, timestamp, roomName, username, message);
+
+                            string[] iddata = msgdata[0].Split(new char[] { '/' });
+
+                            if (iddata.Length == 2)
+                            {
+                                int msgid = Convert.ToInt32(iddata[1]);
+                                int replyid = Convert.ToInt32(iddata[0]);
+                                ReplyReceived(replyid, msgid, timestamp, roomName, username, message);
+                            }
+                            else
+                            {
+                                int msgid = Convert.ToInt32(msgdata[0]);
+                                BroadcastMessageReceived(msgid, timestamp, roomName, username, message);
+                            }
                         }
                         else
                         {
